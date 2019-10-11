@@ -70,7 +70,7 @@ impl API {
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
-<script>js_ffi.run("my_app.wasm");</script>
+<script>js_ffi.run("example.wasm");</script>
 ```
 
 ## How it works
@@ -122,7 +122,7 @@ fn main() {
         window.alert(msg);
     }
 </script>
-<script>js_ffi.run("my_app.wasm");</script>
+<script>js_ffi.run("example.wasm");</script>
 ```
 
 # Don't like Rust?
