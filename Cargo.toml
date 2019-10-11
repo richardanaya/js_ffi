@@ -1,0 +1,18 @@
+[package]
+name = "js_ffi"
+version = "0.0.10"
+authors = ["Richard Anaya"]
+edition = "2018"
+description = "A FFI library for calling javascript"
+license = "MIT OR Apache-2.0"
+categories = ["wasm", "no-std"]
+repository = "https://github.com/richardanaya/js_ffi"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+woke = "0.0.2"
+once_cell = "1.2.0"
+cstring = "0.0.4"
+spin = "0.5.2"
+hashbrown = "0.6"
