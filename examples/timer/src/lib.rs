@@ -7,7 +7,7 @@ use js_ffi::*;
 pub fn main() -> () {
     let api = get_api().lock();
     api.window_set_interval(
-        Box::new(move || {
+        Box::new(|| {
             Executor::spawn(async {
                 let api = get_api().lock();
                 api.console_log("Tic");
