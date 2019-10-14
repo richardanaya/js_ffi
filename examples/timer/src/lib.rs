@@ -30,7 +30,6 @@ fn get_api() -> &'static Mutex<API> {
     })
 }
 
-#[derive(Clone)]
 struct API {
     log_handle: FunctionHandle,
     set_timeout_handle: FunctionHandle,
