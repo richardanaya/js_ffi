@@ -70,7 +70,7 @@ impl API {
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
-<script>js_ffi.run("my_app.wasm");</script>
+<script>js_ffi.run("example.wasm");</script>
 ```
 
 ## How it works
@@ -122,23 +122,29 @@ fn main() {
         window.alert(msg);
     }
 </script>
-<script>js_ffi.run("my_app.wasm");</script>
+<script>js_ffi.run("example.wasm");</script>
 ```
 
 # Don't like Rust?
 
 The script `js_ffi.js` has nothing Rust specific.  Everything is only done through a very basic interface
 
-* `jsffiregister(i32,i32)`
-* `jsfficall0(f32,i32)`
-* `jsfficall1(f32,i32,i32,f32)`
-* `jsfficall2(f32,i32,i32,f32,i32,f32)`
+* `jsffiregister(i32)->i32`
+* `jsffirelease(i32)`
+* `jsfficall0(f32,i32)->f32`
+* `jsfficall1(f32,i32,i32,f32)->f32`
+* `jsfficall2(f32,i32,i32,f32,i32,f32)->f32`
 * ...
-* `jsfficall10(f32,i32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32)`
+* `jsfficall10(f32,i32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32)->f32`
 
-And an entry point function:
+an entry point function:
 
 * `main()`
+
+and expects on your module:
+
+* jsffimalloc(i32) -> i32
+* jsfficallback(i32,f32,f32,f32,f32,f32,f32,f32,f32,f32,f32)
 
 As long as your module adheres to this you can use js_ffi. Strings are simply c-strings in memorythat end in a `0` character.
 
