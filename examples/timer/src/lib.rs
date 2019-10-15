@@ -1,15 +1,23 @@
 use executor::Executor;
-use once_cell::sync::OnceCell;
+use once_cell::sync::Lazy;
 use spin::Mutex;
 use js_ffi::*;
 
+static JS_API: Lazy<Mutex<API>> = Lazy::new(|| {
+    let a = API {
+        log_handle: register("console.log"),
+        set_interval_handle: register("window.setInterval"),
+        set_timeout_handle: register("window.setTimeout"),
+    };
+    Mutex::new(a)
+});
+
 #[no_mangle]
 pub fn main() -> () {
-    let api = get_api().lock();
-    api.window_set_interval(
+    JS_API.lock().window_set_interval(
         Box::new(|| {
             Executor::spawn(async {
-                let api = get_api().lock();
+                let api = JS_API.lock();
                 api.console_log("Tic");
                 api.window_set_timeout(500).await;
                 api.console_log("Toc");
@@ -17,17 +25,6 @@ pub fn main() -> () {
         }),
         1000,
     );
-}
-
-fn get_api() -> &'static Mutex<API> {
-    static INSTANCE: OnceCell<Mutex<API>> = OnceCell::new();
-    INSTANCE.get_or_init(|| {
-        Mutex::new(API {
-        log_handle: register("console.log"),
-        set_interval_handle: register("window.setInterval"),
-        set_timeout_handle: register("window.setTimeout"),
-     })
-    })
 }
 
 struct API {
