@@ -31,9 +31,9 @@ fn get_api() -> &'static Mutex<API> {
 }
 
 struct API {
-    log_handle: FunctionHandle,
-    set_timeout_handle: FunctionHandle,
-    set_interval_handle: FunctionHandle,
+    log_handle: JSValue,
+    set_timeout_handle: JSValue,
+    set_interval_handle: JSValue,
 }
 
 impl API {
@@ -49,7 +49,7 @@ impl API {
             TYPE_FUNCTION,
             id,
             TYPE_NUM,
-            millis as f32,
+            millis as JSValue,
         );
     }
 
@@ -61,7 +61,7 @@ impl API {
             TYPE_FUNCTION,
             id,
             TYPE_NUM,
-            millis as f32,
+            millis as JSValue,
         );
         future
     }

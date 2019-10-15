@@ -2,7 +2,7 @@
 
 ```toml
 [dependencies]
-js_ffi = "0.0.10"
+js_ffi = "0.0.11"
 ```
 
 A simple FFI library for calling javascript from web assembly with Rust
@@ -44,8 +44,8 @@ pub fn main() -> () {
 }
 
 struct API {
-    log_handle: FunctionHandle,
-    set_timeout_handle: FunctionHandle,
+    log_handle: JSValue,
+    set_timeout_handle: JSValue,
 }
 
 impl API {
@@ -61,7 +61,7 @@ impl API {
             TYPE_FUNCTION,
             id,
             TYPE_NUM,
-            millis as f32,
+            millis as JSValue,
         );
         future
     }
