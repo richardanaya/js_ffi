@@ -42,6 +42,7 @@ var js_ffi = {
         const TYPE_BOOL = 3;
         const TYPE_FUNCTION = 4;
         const TYPE_OBJ = 5;
+        const TYPE_UINT8_ARRAY = 6;
     
         const utf8dec = new TextDecoder("utf-8");
         const utf8enc = new TextEncoder("utf-8");
@@ -65,6 +66,17 @@ var js_ffi = {
             }
             return utf8dec.decode(new Uint8Array(str));
         }
+
+        function getUint8ArrayFromMemory(mem,start){
+            const data32 = new Uint32Array(mem);
+            const data = new Uint8Array(mem);
+            const length = data32[start/4];
+            const offset = data32[start/4+1];
+            let b = mem.slice(offset,offset+length)
+            let a = new Uint8Array(b);
+            debugger;
+            return a;
+        }
     
         function convertArgument(val_type,val){
             if(val_type == TYPE_NOTHING){
@@ -75,6 +87,8 @@ var js_ffi = {
                 val = val != 0;
             } else if(val_type == TYPE_OBJ){
                 val = allocator_get(val);
+            } else if(val_type == TYPE_UINT8_ARRAY){
+                val = getUint8ArrayFromMemory(mod.instance.exports.memory.buffer,val);
             } else if(val_type == TYPE_FUNCTION){
                 let id = val;
                 val = function(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10){

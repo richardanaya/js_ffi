@@ -1,8 +1,8 @@
 #![no_std]
 extern crate alloc;
 use alloc::vec::Vec;
-use cstring::{cstr, cstr_to_string};
 pub use callback::*;
+use cstring::{cstr, cstr_to_string};
 pub use wasm_common::*;
 
 extern "C" {
@@ -169,6 +169,7 @@ pub const TYPE_STRING: JSType = 2;
 pub const TYPE_BOOL: JSType = 3;
 pub const TYPE_FUNCTION: JSType = 4;
 pub const TYPE_OBJECT: JSType = 5;
+pub const TYPE_UINT8_ARRAY: JSType = 6;
 
 pub fn release(obj: JSValue) {
     unsafe { jsffirelease(obj) }
@@ -398,6 +399,24 @@ pub fn to_js_string(s: &str) -> JSValue {
     cstr(s) as JSValue
 }
 
+pub fn to_js_typed_array<T>(s: &Vec<T>) -> TypedArray {
+    TypedArray {
+        length: s.len(),
+        pointer: s.as_ptr() as *const u8,
+    }
+}
+
+#[repr(C)]
+pub struct TypedArray {
+    length: usize,
+    pointer: *const u8,
+}
+
+impl TypedArray {
+    pub fn as_js_ptr(&self) -> JSValue {
+        self as *const _ as usize as JSValue
+    }
+}
 
 #[no_mangle]
 pub fn jsfficallback(
