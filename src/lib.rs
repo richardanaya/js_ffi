@@ -401,15 +401,15 @@ pub fn to_js_string(s: &str) -> JSValue {
 
 pub fn to_js_typed_array<T>(s: &Vec<T>) -> TypedArray {
     TypedArray {
-        length: s.len(),
-        pointer: s.as_ptr() as *const u8,
+        length: s.len() as u32,
+        pointer: s.as_ptr() as u32,
     }
 }
 
 #[repr(C)]
 pub struct TypedArray {
-    length: usize,
-    pointer: *const u8,
+    length: u32,
+    pointer: u32,
 }
 
 impl TypedArray {
