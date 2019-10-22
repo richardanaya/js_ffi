@@ -3,7 +3,8 @@ extern crate alloc;
 use alloc::vec::Vec;
 pub use callback::*;
 use cstring::{cstr, cstr_to_string};
-pub use wasm_common::*;
+pub use web_common::*;
+use unreachable::*;
 
 extern "C" {
     fn jsffirelease(obj: JSValue);
@@ -433,7 +434,7 @@ pub fn jsfficallback(
     a10: JSValue,
 ) -> () {
     let h = get_callback(id);
-    let handler_ref = h.unwrap().clone();
+    let handler_ref = unsafe{ h.unchecked_unwrap().clone() };
     let handler = handler_ref.lock();
     match &*handler {
         CallbackHandler::Callback0(c) => c(),

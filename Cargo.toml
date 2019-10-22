@@ -1,6 +1,6 @@
 [package]
 name = "js_ffi"
-version = "0.0.12"
+version = "0.0.13"
 authors = ["Richard Anaya"]
 edition = "2018"
 description = "A FFI library for calling javascript"
@@ -12,5 +12,6 @@ repository = "https://github.com/richardanaya/js_ffi"
 
 [dependencies]
 cstring = "0.0.4"
-wasm_common = "0.0.1"
-callback = "0.0.3"
+web_common = "0.0.1"
+callback = "0.0.4"
+unreachable = "1.0.0"
