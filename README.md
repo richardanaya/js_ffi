@@ -6,7 +6,7 @@ js_ffi = "0.0.14"
 ```
 
 A simple FFI library for calling javascript from web assembly with Rust
-* #![no_std] + alloc for uber small wasm ( unfortunately [async-await does't work with no_std yet](https://github.com/rustasync/team/issues/42))
+* #![no_std] + alloc for uber small wasm ( unfortunately [async-await does't work with no_std yet](https://github.com/rustasync/team/issues/42) and [alloc_error_handler is only on nightly](https://github.com/rust-lang/rust/issues/51540))
 * low magic
 * minimal
 * no macros
