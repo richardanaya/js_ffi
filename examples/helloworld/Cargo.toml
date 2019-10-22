@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 executor = "0.0.3"
 js_ffi = {path="../../"}
-
+malloc = {path="../../../malloc"}
 
 [lib]
 crate-type =["cdylib"]
@@ -17,3 +17,4 @@ crate-type =["cdylib"]
 [profile.release]
 lto = true
 opt-level = 's'
+panic = 'abort'

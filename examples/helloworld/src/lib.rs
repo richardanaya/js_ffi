@@ -1,4 +1,10 @@
+#![no_std]
+#![no_main]
+
 use js_ffi::*;
+
+#[global_allocator]
+static ALLOCATOR: malloc::Allocator = malloc::Allocator;
 
 #[no_mangle]
 pub fn main() -> () {

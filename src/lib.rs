@@ -420,7 +420,7 @@ impl TypedArray {
 
 #[no_mangle]
 pub fn jsfficallback(
-    id: i32,
+    id: u32,
     a1: JSValue,
     a2: JSValue,
     a3: JSValue,
@@ -432,9 +432,8 @@ pub fn jsfficallback(
     a9: JSValue,
     a10: JSValue,
 ) -> () {
-    let h = get_callbacks().lock();
-    let handler_ref = h.handlers.get(&id).unwrap().clone();
-    core::mem::drop(h);
+    let h = get_callback(id);
+    let handler_ref = h.unwrap().clone();
     let handler = handler_ref.lock();
     match &*handler {
         CallbackHandler::Callback0(c) => c(),
