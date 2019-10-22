@@ -13,5 +13,5 @@ repository = "https://github.com/richardanaya/js_ffi"
 [dependencies]
 cstring = "0.0.4"
 web_common = "0.0.1"
-callback = "0.0.4"
+callback = "0.0.5"
 unreachable = "1.0.0"
