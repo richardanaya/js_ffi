@@ -2,7 +2,7 @@
 
 ```toml
 [dependencies]
-js_ffi = "0.0.11"
+js_ffi = "0.0.14"
 ```
 
 A simple FFI library for calling javascript from web assembly with Rust

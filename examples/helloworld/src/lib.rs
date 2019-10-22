@@ -1,6 +1,5 @@
-#![no_main]
 #![no_std]
-#![feature(core_intrinsics, lang_items, alloc_error_handler)]
+#![feature(alloc_error_handler)]
 
 use js_ffi::*;
 
@@ -16,11 +15,11 @@ pub fn main() -> () {
 static ALLOCATOR:malloc::Allocator = malloc::Allocator;
 
 #[panic_handler]
-fn my_panic(_info: &core::panic::PanicInfo) -> ! {
+fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 
 #[alloc_error_handler]
-fn foo(_: core::alloc::Layout) -> ! {
+fn oom(_: core::alloc::Layout) -> ! {
     loop {}
 }
