@@ -416,13 +416,16 @@ pub fn to_js_typed_array<T>(s: &Vec<T>) -> TypedArray {
     }
 }
 
-pub fn to_typed_array<T>(ptr:JSValue) -> Vec<T> where T:Copy {
+pub fn to_typed_array<T>(ptr: JSValue) -> Vec<T>
+where
+    T: Copy,
+{
     unsafe {
         let start = ptr as usize;
         let lptr = start as *const usize;
         let length = *lptr;
         let mut v = Vec::with_capacity(length);
-        let mut data_ptr = ptr as usize+core::mem::size_of::<usize>();
+        let mut data_ptr = ptr as usize + core::mem::size_of::<usize>();
         for _ in 0..length {
             v.push(*(data_ptr as *const T));
             data_ptr += core::mem::size_of::<T>();
