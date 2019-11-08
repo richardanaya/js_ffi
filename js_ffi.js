@@ -1,5 +1,5 @@
 var js_ffi = {
-  run: function(path, onLoad) {
+  run: function(cfg) {
     //allocator
     let allocations = [undefined, null, console, window, document];
     let empty = [];
@@ -349,8 +349,10 @@ var js_ffi = {
       }
       return allocate(r);
     }
-
-    fetch(path)
+    if (typeof cfg === "string") {
+      cfg = { path: cfg };
+    }
+    fetch(cfg.path)
       .then(response => response.arrayBuffer())
       .then(bytes =>
         WebAssembly.instantiate(bytes, {
@@ -626,8 +628,8 @@ var js_ffi = {
           }
         }).then(module => {
           mod = module;
-          if (onLoad) {
-            onLoad(module);
+          if (cfg.onLoad) {
+            cfg.onLoad(module);
           }
           module.instance.exports.main();
         })
