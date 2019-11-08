@@ -15,9 +15,9 @@ Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,
 ## Hello World!
 
 ```rust
-// get a function handle to console log javascript function
-let log = register("console.log");
-// call with 1 parameter with no object context and a string
+// get a reference to the function `console.log` in javascript
+let log:JSValue = register("console.log");
+// call the function with 1 string parameter
 call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
 ```
 
