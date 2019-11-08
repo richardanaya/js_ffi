@@ -1,7 +1,7 @@
 # js_ffi
 
 A simple FFI library for invoking javascript functions from web assembly with Rust
-* support for callbacks, typed arrays, javascript function invocations, and references to javascript objects
+* support for callbacks, callbacks as futures, typed arrays, javascript function invocations, and references to javascript objects
 * flexible enough to work with nodejs and apis beyond the stand browser apis
 * works with web assembly languages other than Rust
 
