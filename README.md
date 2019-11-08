@@ -84,7 +84,7 @@ pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
 
 ## Advanced
 
-Wrap third party. Anything with its functions in global space should be able to be wrapped and invoked.
+Wrap third party libraries. Anything with its functions in global space should be able to be wrapped and invoked.
 
 ```rust
 use js_ffi::*;
