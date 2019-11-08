@@ -10,7 +10,7 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 * flexible enough to work with nodejs and apis beyond the stand browser apis
 * works with web assembly languages other than Rust
 
-Think of it like a ust version of javascript's '<function>.call(<object>,a0,a1,...)' but limited by web assembly cross environment restrictions.
+Think of it like a ust version of javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly cross environment restrictions.
 
 ## Hello World!
 
@@ -143,7 +143,7 @@ and expects on your module:
 * jsffimalloc(i32) -> i32
 * jsfficallback(i32,f32,f32,f32,f32,f32,f32,f32,f32,f32,f32)
 
-As long as your module adheres to this you can use js_ffi. Strings are simply c-strings in memorythat end in a `0` character.
+As long as your module adheres to this you can use `js_ffi`. Strings are simply c-strings in memorythat end in a `0` character.
 
 # License
 
