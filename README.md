@@ -35,10 +35,16 @@ let query_selector = register("document.querySelector");
 let add_event_listener = register("Node.prototype.addEventListener");
 let alert = register("window.alert");
 
+// this call returns a JSValue that is a reference to the button
 let btn = call_1(UNDEFINED, query_selector, TYPE_STRING, to_js_string("#button"));
+
+// creating a callback returns a JSValue reference to the callback function
 let cb = create_callback0(Box::new(||{
     call_1(UNDEFINED, alert, TYPE_STRING, to_js_string("I was clicked"));
 }));
+
+// since we are calling `addEventListener` as a method of `btn`, we pass it 
+// in the first parameter as the object context
 call_2(btn, add_event_listener, TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
 ```
 
