@@ -462,8 +462,8 @@ pub fn jsfficallback(
 ) -> () {
     let h = get_callback(id);
     let handler_ref = h.unwrap().clone();
-    let handler = handler_ref.lock();
-    match &*handler {
+    let mut handler = handler_ref.lock();
+    match &mut *handler {
         CallbackHandler::Callback0(c) => c(),
         CallbackHandler::Callback1(c) => c(a1),
         CallbackHandler::Callback2(c) => c(a1, a2),
