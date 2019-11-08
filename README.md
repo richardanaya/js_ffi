@@ -1,10 +1,5 @@
 # js_ffi
 
-```toml
-[dependencies]
-js_ffi = "0.0.14"
-```
-
 A simple FFI library for invoking javascript functions from web assembly with Rust
 * support for callbacks, typed arrays, javascript function invocations, and references to javascript objects
 * flexible enough to work with nodejs and apis beyond the stand browser apis
@@ -20,12 +15,19 @@ Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,
 4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.)
 
 ## Hello World!
-
+```toml
+[dependencies]
+js_ffi = "0.0.14"
+```
 ```rust
 // get a reference to the function `console.log` in javascript
 let log:JSValue = register("console.log");
 // call the function with 1 string parameter
 call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
+```
+```html
+<script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
+<script>js_ffi.run("example.wasm");</script>
 ```
 
 ## Event Listener
@@ -76,11 +78,6 @@ pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
     call_2(UNDEFINED,fn_ref,TYPE_FUNCTION,id,TYPE_NUM,millis as JSValue);
     future
 }
-```
-
-```html
-<script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
-<script>js_ffi.run("example.wasm");</script>
 ```
 
 ## Advanced
