@@ -7,6 +7,7 @@ description = "A FFI library for calling javascript"
 license = "MIT OR Apache-2.0"
 categories = ["wasm", "no-std"]
 repository = "https://github.com/richardanaya/js_ffi"
+readme="README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
