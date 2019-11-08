@@ -33,6 +33,7 @@ call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
 ## Event Listener
 
 ```rust
+// register the methods we want to use
 let query_selector = register("document.querySelector");
 let add_event_listener = register("Node.prototype.addEventListener");
 let alert = register("window.alert");
