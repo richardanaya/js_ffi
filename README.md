@@ -12,6 +12,13 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 
 Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
+## How it works
+
+1. `register` the javascript function to and get a `JSValue` handle to it
+2. use the correct function to call that function based on number of args you are sending (`call_0`,`call_1`,etc.)
+3. if you are calling the function as a method on object represented by a `JSValue` you already have, pass it as the first parameter
+4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.)
+
 ## Hello World!
 
 ```rust
@@ -55,13 +62,6 @@ pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
-
-## How it works
-
-1. `register` the javascript function to and get a `JSValue` handle to it
-2. use the correct function to call that function based on number of args you are sending (`call_0`,`call_1`,etc.)
-3. if you are calling the function as a method on object represented by a `JSValue` you already have, pass it as the first paramter
-4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.)
 
 ## Advanced
 
