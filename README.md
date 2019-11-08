@@ -58,9 +58,10 @@ pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
 
 ## How it works
 
-The basic premise is that you `register` the JavaScript functions you want to have access to from Rust to a constant number function handle. Then you can use `call_*` to send execute the function with arguments depending on the argument count you  want to send (e.g. `call_1`, `call_7`). The idea is you can quickly create wrapper functions for exactly what you need. When calling the function you specify the object to call the function of (or undefined if you just want to call the function), the function id to call you registered with, and pairs of argument type and arguments afer.
-
-`call_*(<object handle>,<function id>,<arg type>,<arg>,<arg type>,<arg>,...)`
+1. register the javascription function want and get a `JSValue` handle to it
+2. use the correct function to call that function based on number of args you are sending (call_0,call_1,etc.)
+3. if you are calling the function as a method on object represented by a `JSValue` you already have, pass it as the first paramter
+4. for each argument specify the type of the argument (TYPE_STRING,TYPE_NUMBER,etc.)
 
 ## Advanced
 
