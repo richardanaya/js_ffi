@@ -5,12 +5,12 @@
 js_ffi = "0.0.14"
 ```
 
-A simple FFI library for calling javascript from web assembly with Rust
+A simple FFI library for invoking javascript functions from web assembly with Rust
 * support for callbacks, typed arrays, javascript function invocations, and references to javascript objects
 * flexible enough to work with nodejs and apis beyond the stand browser apis
 * works with web assembly languages other than Rust
 
-The basic idea is that you register functions in javascript and get a handle to that function.
+Think of it like a ust version of javascript's '<function>.call(<object>,a0,a1,...)' but limited by web assembly cross environment restrictions.
 
 ## Hello World!
 
