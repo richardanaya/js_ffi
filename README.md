@@ -28,6 +28,20 @@ let log:JSValue = register("console.log");
 call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
 ```
 
+## Event Listener
+
+```rust
+let query_selector = register("document.querySelector");
+let add_event_listener = register("Node.prototype.addEventListener");
+let alert = register("window.alert");
+
+let btn = call_1(UNDEFINED, query_selector, TYPE_STRING, to_js_string("#button"));
+let cb = create_callback0(Box::new(||{
+    call_1(UNDEFINED, alert, TYPE_STRING, to_js_string("I was clicked"));
+}));
+call_2(btn, add_event_listener, TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
+```
+
 ## Async Example
 
 ```rust
