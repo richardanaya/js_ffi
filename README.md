@@ -12,16 +12,6 @@ A simple FFI library for calling javascript from web assembly with Rust
 
 The basic idea is that you register functions in javascript and get a handle to that function.
 
-```rust
-register("<javascript function>") -> <reference to javascript function>
-```
-
-Then you can invoke this function with a number of arguments 
-
-```rust
-call_[num args](<object context of function>,<function reference>,<arg0 type>,<arg0 value>,<arg1 type>,<arg1 value>,...)
-```
-
 ## Hello World!
 
 ```rust
