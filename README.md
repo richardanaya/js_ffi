@@ -21,47 +21,33 @@ let log:JSValue = register("console.log");
 call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
 ```
 
-## Simple Example
+## Async Example
 
 ```rust
 use executor::Executor;
 use js_ffi::*;
 
+async fn run() {
+    let console_log = register("console.log");
+    let set_timeout = register("window.setTimeout");
+    log(console_log,"hello")
+    window_set_timeout(set_timeout,1000).await;
+    log(console_log,"hello")
+}
+
 #[no_mangle]
 pub fn main() -> () {
-    Executor::spawn(async {
-        let api = API {
-            log_handle: register("console.log"),
-            set_timeout_handle: register("window.setTimeout"),
-        };
-        api.console_log("hello");
-        api.window_set_timeout(1000).await;
-        api.console_log("world!");
-    });
+    Executor::spawn(run());
 }
 
-struct API {
-    log_handle: JSValue,
-    set_timeout_handle: JSValue,
+pub fn console_log(fn_ref:JSValue, msg: &str) {
+    call_1(UNDEFINED,fn_ref,TYPE_STRING,to_js_string(msg));
 }
 
-impl API {
-    pub fn console_log(&self, msg: &str) {
-        call_1(UNDEFINED, self.log_handle, TYPE_STRING, to_js_string(msg));
-    }
-
-    pub fn window_set_timeout(&self, millis: i32) -> CallbackFuture {
-        let (future, id) = CallbackFuture::new();
-        call_2(
-            UNDEFINED,
-            self.set_timeout_handle,
-            TYPE_FUNCTION,
-            id,
-            TYPE_NUM,
-            millis as JSValue,
-        );
-        future
-    }
+pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
+    let (future, id) = CallbackFuture::new();
+    call_2(UNDEFINED,fn_ref,TYPE_FUNCTION,id,TYPE_NUM,millis as JSValue);
+    future
 }
 ```
 
