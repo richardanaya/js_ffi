@@ -6,14 +6,21 @@ js_ffi = "0.0.14"
 ```
 
 A simple FFI library for calling javascript from web assembly with Rust
-* #![no_std] + alloc for uber small wasm ( unfortunately [async-await does't work with no_std yet](https://github.com/rustasync/team/issues/42) and [alloc_error_handler is only on nightly](https://github.com/rust-lang/rust/issues/51540))
-* low magic
-* minimal
-* no macros
-* ready for [web references](https://github.com/WebAssembly/reference-types/blob/master/proposals/reference-types/Overview.md)
-* compatible with async-await futures
+* support for callbacks, typed arrays, javascript function invocations, and references to javascript objects
+* flexible enough to work with nodejs and apis beyond the stand browser apis
 * works with web assembly languages other than Rust
-* readable library that can be understood quickly and learned from
+
+The basic idea is that you register functions in javascript and get a handle to that function.
+
+```rust
+register("<javascript function>") -> <reference to javascript function>
+```
+
+Then you can invoke this function with a number of arguments 
+
+```rust
+call_[num args](<object context of function>,<function reference>,<arg0 type>,<arg0 value>,<arg1 type>,<arg1 value>,...)
+```
 
 ## Hello World!
 
