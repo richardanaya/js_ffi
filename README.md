@@ -58,10 +58,10 @@ pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
 
 ## How it works
 
-1. register the javascription function want and get a `JSValue` handle to it
-2. use the correct function to call that function based on number of args you are sending (call_0,call_1,etc.)
+1. `register` the javascript function to and get a `JSValue` handle to it
+2. use the correct function to call that function based on number of args you are sending (`call_0`,`call_1`,etc.)
 3. if you are calling the function as a method on object represented by a `JSValue` you already have, pass it as the first paramter
-4. for each argument specify the type of the argument (TYPE_STRING,TYPE_NUMBER,etc.)
+4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.)
 
 ## Advanced
 
