@@ -92,11 +92,11 @@ use js_ffi::*;
 #[no_mangle]
 fn main() {
     // register functions of things in global scope
-    let loud = register("(x) => { 
+    let my_fn = register("(x) => { 
         console.log("say something here too");
         say_loud(x);
     }");
-    call_0(UNDEFINED,my_api,TYPE_STRING,"hey");
+    call_0(UNDEFINED,my_fn,TYPE_STRING,"hey");
 }
 ```
 
