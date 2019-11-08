@@ -7,6 +7,8 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 
 Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
+[Documentation](https://docs.rs/js_ffi/)
+
 ## How it works
 
 1. `register` the javascript function to and get a `JSValue` handle to it
@@ -43,7 +45,7 @@ let btn = call_1(UNDEFINED, query_selector, TYPE_STRING, to_js_string("#button")
 
 // creating a callback returns a JSValue reference to the callback function
 // note: this is specifically the number of paramters when creating callbacks
-let cb = create_callback0(Box::new(||{
+let cb = create_callback_0(Box::new(||{
     call_1(UNDEFINED, alert, TYPE_STRING, to_js_string("I was clicked"));
 }));
 
