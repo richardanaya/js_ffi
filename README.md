@@ -17,7 +17,7 @@ Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,
 ## Hello World!
 ```toml
 [dependencies]
-js_ffi = "0.0.14"
+js_ffi = "0.1.0"
 ```
 ```rust
 // get a reference to the function `console.log` in javascript
