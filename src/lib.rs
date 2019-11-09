@@ -409,7 +409,7 @@ pub fn to_js_string(s: &str) -> JSValue {
     cstr(s) as JSValue
 }
 
-pub fn to_js_typed_array<T>(s: &Vec<T>) -> TypedArray {
+pub fn to_js_typed_array<T>(s: &[T]) -> TypedArray {
     TypedArray {
         length: s.len() as u32,
         pointer: s.as_ptr() as u32,
