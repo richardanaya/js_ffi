@@ -180,6 +180,7 @@ pub const TYPE_F32_ARRAY: JSType = 13;
 pub const TYPE_F64_ARRAY: JSType = 14;
 pub const TYPE_BI64_ARRAY: JSType = 15;
 pub const TYPE_BUI64_ARRAY: JSType = 16;
+pub const TYPE_MEMORY: JSType = 17;
 
 pub fn release(obj: JSValue) {
     unsafe { jsffirelease(obj) }
