@@ -1,4 +1,3 @@
-#define export __attribute__((visibility("default")))
 typedef double JSValue;
 extern int jsffiregister(char*);
 extern void jsfficall1(JSValue,int,int,JSValue);
