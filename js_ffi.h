@@ -1,17 +1,17 @@
 typedef double JSValue;
 extern void jsffirelease(JSValue);
 extern int jsffiregister(char*);
-extern void jsfficall0(JSValue,int);
-extern void jsfficall1(JSValue,int,int,JSValue);
-extern void jsfficall2(JSValue,int,int,JSValue,int,JSValue);
-extern void jsfficall3(JSValue,int,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall4(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall5(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall6(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall7(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall8(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall9(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
-extern void jsfficall10(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall0(JSValue,int);
+extern JSValue jsfficall1(JSValue,int,int,JSValue);
+extern JSValue jsfficall2(JSValue,int,int,JSValue,int,JSValue);
+extern JSValue jsfficall3(JSValue,int,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall4(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall5(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall6(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall7(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall8(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall9(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
+extern JSValue jsfficall10(JSValue,int,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue,int,JSValue);
 
 JSValue const JS_UNDEFINED = 0.0;
 JSValue const JS_NULL = 1.0;
