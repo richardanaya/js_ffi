@@ -116,26 +116,13 @@ fn main() {
 
 # Don't like Rust?
 
-The script `js_ffi.js` has nothing Rust specific.  Everything is only done through a very basic interface
+The script `js_ffi.js` has nothing Rust specific.  
 
-* `jsffiregister(i32)->i32`
-* `jsffirelease(i32)`
-* `jsfficall0(f32,i32)->f32`
-* `jsfficall1(f32,i32,i32,f32)->f32`
-* `jsfficall2(f32,i32,i32,f32,i32,f32)->f32`
-* ...
-* `jsfficall10(f32,i32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32,i32,f32)->f32`
-
-an entry point function:
-
-* `main()`
-
-and expects on your module:
-
-* jsffimalloc(i32) -> i32
-* jsfficallback(i32,f32,f32,f32,f32,f32,f32,f32,f32,f32,f32)
-
-As long as your module adheres to this you can use `js_ffi`. Strings are simply c-strings in memorythat end in a `0` character.
+* Operations execute through an interface specified in this [`js_ffi.h`](https://github.com/richardanaya/js_ffi/blob/master/js_ffi.h)
+* `js_ffi` expects an entry point `main()`
+* If you plan on having your module receive data it must implement `jsffimalloc(i32) -> i32`
+* If you plan on having your module receive callbacks it must implement `jsfficallback(i32,f32,f32,f32,f32,f32,f32,f32,f32,f32,f32)`
+* strings are simply c-strings in memory that end in a `0` character.
 
 # License
 
