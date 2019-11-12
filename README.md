@@ -25,7 +25,7 @@ js_ffi = "0.1.0"
 ```
 ```rust
 // get a reference to the function `console.log` in javascript
-let log:JSValue = register("console.log");
+let log = register("console.log");
 // call the function with 1 string parameter
 call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
 ```
