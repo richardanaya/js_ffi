@@ -13,10 +13,10 @@ Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,
 
 ## How it works
 
-1. `register` the javascript function to and get a `JSValue` handle to it
-2. use the correct function to call that function based on number of args you are sending (`call_0`,`call_1`,etc.)
-3. if you are calling the function as a method on object represented by a `JSValue` you already have, pass it as the first parameter
-4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.)
+1. `register` the javascript function to get a `JSValue` handle to the function.
+2. use the corresponding function to call with that function handle based on number of args you are sending (`call_0`,`call_1`,etc.).
+3. if you are calling the function handle as a method on object represented by a `JSValue` you already have, pass it as the first parameter, otherwise the first argument will be `UNDEFINED`.
+4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
 
 ## Hello World!
 ```toml
