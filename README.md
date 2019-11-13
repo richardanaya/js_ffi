@@ -86,7 +86,7 @@ fn main() {
         console.log("say something here too");
         say_loud(x);
     });
-    call_0(UNDEFINED,my_fn,TYPE_STRING,"hey");
+    my_fn.invoke_0(TYPE_STRING,"hey");
 }
 ```
 
