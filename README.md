@@ -7,6 +7,7 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 - [x] callbacks
 - [x] futures
 - [x] typed arrays
+- [x] direct memory access
 - [x] usable with nodejs
 - [x] works with web assembly languages other than Rust
 
