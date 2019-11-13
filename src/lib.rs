@@ -18,6 +18,20 @@ macro_rules! js {
     };
 }
 
+pub struct JSObject(JSValue);
+
+impl Drop for JSObject {
+    fn drop(&mut self) {
+        release_object(self.0)
+    }
+}
+
+impl JSObject {
+    pub fn value(&self) -> JSValue {
+        self.0
+    }
+}
+
 impl JSFunction {
     pub fn call_0(&self, obj: JSValue) -> JSValue {
         unsafe { jsfficall0(obj, self.0) }
