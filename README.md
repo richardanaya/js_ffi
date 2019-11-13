@@ -9,8 +9,6 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 
 Think of it like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
-[Documentation](https://docs.rs/js_ffi/)
-
 ## Hello World!
 ```toml
 [dependencies]
