@@ -2,7 +2,7 @@
 
 <a href="https://docs.rs/js_ffi"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
 
-A simple FFI library for invoking javascript functions from web assembly with Rust
+A FFI library for invoking Javascript functions from Web Assembly with Rust
 
 - [x] no code generation or special cargo components
 - [x] callbacks
@@ -13,7 +13,7 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 - [x] works with web assembly languages other than Rust
 - [x] fancy `js!` macro for clean inline javascript
 
-Think of this project like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
+Think of this project like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by Web Assembly's function call restrictions.
 
 ## Hello World!
 ```toml
@@ -35,7 +35,7 @@ pub fn main() -> () {
 
 ## How it works
 
-1. Get a handle to some javascript function using the `js!` macro
+1. Get a handle to some Javascript function using the `js!` macro
 2. If you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
 3. If you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
 4. For each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
