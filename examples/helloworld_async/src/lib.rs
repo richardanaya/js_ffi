@@ -5,8 +5,8 @@ use js_ffi::*;
 pub fn main() -> () {
     Executor::spawn(async {
         let api = API {
-            fn_log: register("console.log"),
-            fn_set_timeout: register("window.setTimeout"),
+            fn_log: js!(console.log),
+            fn_set_timeout: js!(window.setTimeout),
         };
         api.console_log("hello");
         api.window_set_timeout(1000).await;

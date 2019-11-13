@@ -2,7 +2,7 @@ use js_ffi::*;
 
 #[no_mangle]
 pub fn main() -> () {
-    let log = register("console.log");
+    let log = js!("console.log");
     log.invoke_1(
         TYPE_UINT8_ARRAY,
         to_js_typed_array(&vec![1u8, 2, 3]).as_js_ptr(),

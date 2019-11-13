@@ -3,10 +3,10 @@ use js_ffi::*;
 #[no_mangle]
 fn main() {
     let api = API {
-        query_selector_handle: register("document.querySelector"),
-        get_context_handle: register("HTMLCanvasElement.prototype.getContext"),
-        fill_style_handle: register("(function(s){this.fillStyle = s;})"),
-        fill_rect_handle: register("CanvasRenderingContext2D.prototype.fillRect"),
+        query_selector_handle: js!(document.querySelector),
+        get_context_handle: js!(HTMLCanvasElement.prototype.getContext),
+        fill_style_handle: js!((function(s){this.fillStyle = s;})),
+        fill_rect_handle: js!(CanvasRenderingContext2D.prototype.fillRect),
     };
 
     let s = api.query_selector("#screen");
