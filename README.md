@@ -40,9 +40,9 @@ pub fn main() -> () {
 
 ```rust
 let btn = js!(document.querySelector).invoke_1(TYPE_STRING, to_js_string("#button"));
-let cb = create_callback_0(Box::new(||{
+let cb = create_callback_0(||{
     js!(window.alert).invoke_1(TYPE_STRING, to_js_string("I was clicked"));
-}));
+});
 js!(Node.prototype.addEventListener).call_2(btn,TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
 ```
 
