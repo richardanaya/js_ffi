@@ -11,6 +11,7 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 - [x] direct memory access
 - [x] usable with nodejs
 - [x] works with web assembly languages other than Rust
+- [x] fancy `js!` macro for clean inline javascript
 
 Think of this project like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
