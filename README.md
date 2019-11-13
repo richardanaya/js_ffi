@@ -3,13 +3,17 @@
 <a href="https://docs.rs/js_ffi"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
 
 A simple FFI library for invoking javascript functions from web assembly with Rust
-* support for callbacks, callbacks as futures, typed arrays, javascript function invocations, and references to javascript objects
-* flexible enough to work with nodejs and apis beyond the stand browser apis
-* works with web assembly languages other than Rust
 
-Think of it like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
+- [x] no code generation or special cargo components
+- [x] callbacks
+- [x] futures
+- [x] typed arrays
+- [x] direct memory access
+- [x] usable with nodejs
+- [x] works with web assembly languages other than Rust
+- [x] fancy `js!` macro for clean inline javascript
 
-[Documentation](https://docs.rs/js_ffi/)
+Think of this project like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
 ## Hello World!
 ```toml
@@ -32,17 +36,18 @@ pub fn main() -> () {
 ## How it works
 
 1. Get a handle to some javascript function using the `js!` macro
-2. if you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
-3. if you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
-4. for each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
+2. If you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
+3. If you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
+4. For each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
+5. Reuse function handles by putting them in global state if necessary.
 
 ## Event Listener
 
 ```rust
 let btn = js!(document.querySelector).invoke_1(TYPE_STRING, to_js_string("#button"));
-let cb = create_callback_0(Box::new(||{
+let cb = create_callback_0(||{
     js!(window.alert).invoke_1(TYPE_STRING, to_js_string("I was clicked"));
-}));
+});
 js!(Node.prototype.addEventListener).call_2(btn,TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
 ```
 
@@ -86,7 +91,7 @@ fn main() {
         console.log("say something here too");
         say_loud(x);
     });
-    call_0(UNDEFINED,my_fn,TYPE_STRING,"hey");
+    my_fn.invoke_0(TYPE_STRING,"hey");
 }
 ```
 
