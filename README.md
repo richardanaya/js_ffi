@@ -92,7 +92,7 @@ fn main() {
         console.log("say something here too");
         say_loud(x);
     });
-    my_fn.invoke_0(TYPE_STRING,"hey");
+    my_fn.invoke_1(TYPE_STRING,"hey");
 }
 ```
 
