@@ -7,10 +7,11 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] no code generation or special cargo components
 - [x] support for callbacks (e.g. `setTimeout`)
 - [x] futures based on callbacks
-- [x] sending/recieving of typed arrays
 - [x] memory as a parameter
 - [x] works with web assembly languages other than Rust
 - [x] a `js!` macro for inline javascript
+- [x] sending of typed arrays
+- [ ] recieving of typed arrays
 - [ ] usable with nodejs
 
 This project has similaries to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
