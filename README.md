@@ -4,6 +4,7 @@
 
 A simple FFI library for invoking javascript functions from web assembly with Rust
 
+- [x] no code generation or special cargo components
 - [x] callbacks
 - [x] futures
 - [x] typed arrays
