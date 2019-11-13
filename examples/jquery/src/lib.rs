@@ -9,20 +9,14 @@ fn main() {
     // reference your own functions created in global scope
     let alert = register("(msg)=>window.alert(msg)");
 
-    let obj = call_1(UNDEFINED, jquery_handle, TYPE_STRING, to_js_string("body"));
-    call_2(
-        obj,
-        jquery_on_handle,
+    let body = jquery_handle.invoke_1(TYPE_STRING, to_js_string("body"));
+    jquery_on_handle.call_2(
+        body,
         TYPE_STRING,
         to_js_string("click"),
         TYPE_FUNCTION,
-        create_callback1(Box::new(move |_| {
-            call_1(
-                UNDEFINED,
-                alert,
-                TYPE_STRING,
-                to_js_string("I was clicked!"),
-            );
+        create_callback_1(Box::new(move |_event| {
+            alert.invoke_1(TYPE_STRING, to_js_string("I was clicked!"));
         })),
     );
 }

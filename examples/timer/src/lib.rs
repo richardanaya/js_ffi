@@ -28,21 +28,19 @@ pub fn main() -> () {
 }
 
 struct API {
-    log_handle: JSValue,
-    set_timeout_handle: JSValue,
-    set_interval_handle: JSValue,
+    log_handle: JSFunction,
+    set_timeout_handle: JSFunction,
+    set_interval_handle: JSFunction,
 }
 
 impl API {
     pub fn console_log(&self, msg: &str) {
-        call_1(UNDEFINED, self.log_handle, TYPE_STRING, to_js_string(msg));
+        self.log_handle.invoke_1(TYPE_STRING, to_js_string(msg));
     }
 
-    pub fn window_set_interval(&self, cb: Box<dyn Fn() -> () + Send + 'static>, millis: i32) {
-        let id = create_callback0(cb);
-        call_2(
-            UNDEFINED,
-            self.set_interval_handle,
+    pub fn window_set_interval(&self, cb: Box<dyn FnMut() -> () + Send + 'static>, millis: i32) {
+        let id = create_callback_0(cb);
+        self.set_interval_handle.invoke_2(
             TYPE_FUNCTION,
             id,
             TYPE_NUM,
@@ -52,9 +50,7 @@ impl API {
 
     pub fn window_set_timeout(&self, millis: i32) -> CallbackFuture {
         let (future, id) = CallbackFuture::new();
-        call_2(
-            UNDEFINED,
-            self.set_timeout_handle,
+        self.set_timeout_handle.invoke_2(
             TYPE_FUNCTION,
             id,
             TYPE_NUM,

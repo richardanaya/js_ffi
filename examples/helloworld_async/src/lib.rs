@@ -5,8 +5,8 @@ use js_ffi::*;
 pub fn main() -> () {
     Executor::spawn(async {
         let api = API {
-            log_handle: register("console.log"),
-            set_timeout_handle: register("window.setTimeout"),
+            fn_log: register("console.log"),
+            fn_set_timeout: register("window.setTimeout"),
         };
         api.console_log("hello");
         api.window_set_timeout(1000).await;
@@ -15,25 +15,19 @@ pub fn main() -> () {
 }
 
 struct API {
-    log_handle: JSValue,
-    set_timeout_handle: JSValue,
+    fn_log: JSFunction,
+    fn_set_timeout: JSFunction,
 }
 
 impl API {
     pub fn console_log(&self, msg: &str) {
-        call_1(UNDEFINED, self.log_handle, TYPE_STRING, to_js_string(msg));
+        self.fn_log.invoke_1(TYPE_STRING, to_js_string(msg));
     }
 
     pub fn window_set_timeout(&self, millis: i32) -> CallbackFuture {
         let (future, id) = CallbackFuture::new();
-        call_2(
-            UNDEFINED,
-            self.set_timeout_handle,
-            TYPE_FUNCTION,
-            id,
-            TYPE_NUM,
-            millis as JSValue,
-        );
+        self.fn_set_timeout
+            .invoke_2(TYPE_FUNCTION, id, TYPE_NUM, millis as JSValue);
         future
     }
 }

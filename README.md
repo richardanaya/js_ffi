@@ -14,20 +14,22 @@ Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,
 ## How it works
 
 1. `register` the javascript function to get a `JSValue` handle to the function.
-2. use the corresponding function to call with that function handle based on number of args you are sending (`call_0`,`call_1`,etc.).
+2. if you are invoking this function as a
 3. if you are calling the function handle as a method on object represented by a `JSValue` you already have, pass it as the first parameter, otherwise the first argument will be `UNDEFINED`.
 4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
 
 ## Hello World!
 ```toml
 [dependencies]
-js_ffi = "0.1.0"
+js_ffi = "0.2.0"
 ```
 ```rust
-// get a reference to the function `console.log` in javascript
-let log = register("console.log");
-// call the function with 1 string parameter
-call_1(UNDEFINED, log, TYPE_STRING, to_js_string("Hello World"));
+use js_ffi::*;
+​
+#[no_mangle]
+pub fn main() -> () {
+    js!(console.log).invoke_1(TYPE_STRING, to_js_string("Hello World"));
+}
 ```
 ```html
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
