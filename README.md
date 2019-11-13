@@ -1,4 +1,4 @@
-# js_ffi
+# js_ffi ☎️ 
 
 <a href="https://docs.rs/js_ffi"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
 
