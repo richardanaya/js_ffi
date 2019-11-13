@@ -7,16 +7,9 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 * flexible enough to work with nodejs and apis beyond the stand browser apis
 * works with web assembly languages other than Rust
 
-Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
+Think of it like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
 [Documentation](https://docs.rs/js_ffi/)
-
-## How it works
-
-1. `register` the javascript function to get a `JSValue` handle to the function.
-2. if you are invoking this function as a
-3. if you are calling the function handle as a method on object represented by a `JSValue` you already have, pass it as the first parameter, otherwise the first argument will be `UNDEFINED`.
-4. for each argument specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
 
 ## Hello World!
 ```toml
@@ -36,26 +29,21 @@ pub fn main() -> () {
 <script>js_ffi.run("example.wasm");</script>
 ```
 
+## How it works
+
+1. Get a handle to some javascript function using the `js!` macro
+2. if you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
+3. if you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
+4. for each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
+
 ## Event Listener
 
 ```rust
-// register the methods we want to use
-let query_selector = register("document.querySelector");
-let add_event_listener = register("Node.prototype.addEventListener");
-let alert = register("window.alert");
-
-// this call returns a JSValue that is a reference to the button
-let btn = call_1(UNDEFINED, query_selector, TYPE_STRING, to_js_string("#button"));
-
-// creating a callback returns a JSValue reference to the callback function
-// note: this is specifically the number of paramters when creating callbacks
+let btn = js!(document.querySelector).invoke_1(TYPE_STRING, to_js_string("#button"));
 let cb = create_callback_0(Box::new(||{
-    call_1(UNDEFINED, alert, TYPE_STRING, to_js_string("I was clicked"));
+    js!(window.alert).invoke_1(TYPE_STRING, to_js_string("I was clicked"));
 }));
-
-// since we are calling `addEventListener` as a method of `btn`, we pass it 
-// in the first parameter as the object context
-call_2(btn, add_event_listener, TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
+js!(Node.prototype.addEventListener).call_2(btn,TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
 ```
 
 ## Async Example
