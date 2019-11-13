@@ -3,11 +3,14 @@
 <a href="https://docs.rs/js_ffi"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
 
 A simple FFI library for invoking javascript functions from web assembly with Rust
-* support for callbacks, callbacks as futures, typed arrays, javascript function invocations, and references to javascript objects
-* flexible enough to work with nodejs and apis beyond the stand browser apis
-* works with web assembly languages other than Rust
 
-Think of it like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
+- [x] callbacks
+- [x] futures
+- [x] typed arrays
+- [x] usable with nodejs
+- [x] works with web assembly languages other than Rust
+
+Think of this project like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
 ## Hello World!
 ```toml
