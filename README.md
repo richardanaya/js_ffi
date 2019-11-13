@@ -48,31 +48,27 @@ js!(Node.prototype.addEventListener).call_2(btn,TYPE_STRING, to_js_string("click
 
 ## Async Example
 
+Using an [`executor`](https://www.github.com/richardanaya/executor) library we can easily turn callbacks into futures and run behavior asynchronously.
+
 ```rust
-use executor::Executor;
 use js_ffi::*;
 
-async fn run() {
-    let console_log = register("console.log");
-    let set_timeout = register("window.setTimeout");
-    log(console_log,"hello")
-    window_set_timeout(set_timeout,1000).await;
-    log(console_log,"hello")
+async fn run(){
+    let console_log = js!(console.log);
+    let set_timeout = js!(window.setTimeout);
+
+    console_log.invoke_1(TYPE_STRING,to_js_string("Hello"));
+
+    let (future, id) = CallbackFuture::new();
+    set_timeout.invoke_2(TYPE_FUNCTION,id,TYPE_NUM,1000 as JSValue);
+    future.await;
+
+    console_log.invoke_1(TYPE_STRING,to_js_string("world!"));
 }
 
 #[no_mangle]
 pub fn main() -> () {
-    Executor::spawn(run());
-}
-
-pub fn console_log(fn_ref:JSValue, msg: &str) {
-    call_1(UNDEFINED,fn_ref,TYPE_STRING,to_js_string(msg));
-}
-
-pub fn window_set_timeout(fn_ref:JSValue, millis: i32) -> CallbackFuture {
-    let (future, id) = CallbackFuture::new();
-    call_2(UNDEFINED,fn_ref,TYPE_FUNCTION,id,TYPE_NUM,millis as JSValue);
-    future
+    executor::spawn(run());
 }
 ```
 

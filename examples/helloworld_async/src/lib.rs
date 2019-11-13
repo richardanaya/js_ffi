@@ -1,33 +1,19 @@
-use executor::Executor;
 use js_ffi::*;
+
+async fn run(){
+    let console_log = js!(console.log);
+    let set_timeout = js!(window.setTimeout);
+
+    console_log.invoke_1(TYPE_STRING,to_js_string("Hello"));
+
+    let (future, id) = CallbackFuture::new();
+    set_timeout.invoke_2(TYPE_FUNCTION,id,TYPE_NUM,1000 as JSValue);
+    future.await;
+
+    console_log.invoke_1(TYPE_STRING,to_js_string("world!"));
+}
 
 #[no_mangle]
 pub fn main() -> () {
-    Executor::spawn(async {
-        let api = API {
-            fn_log: js!(console.log),
-            fn_set_timeout: js!(window.setTimeout),
-        };
-        api.console_log("hello");
-        api.window_set_timeout(1000).await;
-        api.console_log("world!");
-    });
-}
-
-struct API {
-    fn_log: JSFunction,
-    fn_set_timeout: JSFunction,
-}
-
-impl API {
-    pub fn console_log(&self, msg: &str) {
-        self.fn_log.invoke_1(TYPE_STRING, to_js_string(msg));
-    }
-
-    pub fn window_set_timeout(&self, millis: i32) -> CallbackFuture {
-        let (future, id) = CallbackFuture::new();
-        self.fn_set_timeout
-            .invoke_2(TYPE_FUNCTION, id, TYPE_NUM, millis as JSValue);
-        future
-    }
+    executor::spawn(run());
 }
