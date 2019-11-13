@@ -7,7 +7,7 @@ A simple FFI library for invoking javascript functions from web assembly with Ru
 * flexible enough to work with nodejs and apis beyond the stand browser apis
 * works with web assembly languages other than Rust
 
-Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
+Think of it like a Rust version of Javascript's `<function>.call(<object>,a0,a1,...)` but limited by web assembly's function call restrictions.
 
 [Documentation](https://docs.rs/js_ffi/)
 
