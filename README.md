@@ -11,13 +11,6 @@ Think of it like a Rust version of javascript's `<function>.call(<object>,a0,a1,
 
 [Documentation](https://docs.rs/js_ffi/)
 
-## How it works
-
-1. Get a handle to some javascript function using the `js!` macro
-2. if you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
-3. if you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
-4. for each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
-
 ## Hello World!
 ```toml
 [dependencies]
@@ -35,6 +28,13 @@ pub fn main() -> () {
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
+
+## How it works
+
+1. Get a handle to some javascript function using the `js!` macro
+2. if you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
+3. if you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
+4. for each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
 
 ## Event Listener
 
