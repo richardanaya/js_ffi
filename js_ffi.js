@@ -369,7 +369,7 @@ var js_ffi = {
                 code
               );
               let id = functions.length;
-              functions.push(eval(code));
+              functions.push(eval("("+code+")"));
               return id;
             },
             jsfficall0: function(obj, f) {
