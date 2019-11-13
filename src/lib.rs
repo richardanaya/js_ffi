@@ -1,4 +1,5 @@
 #![no_std]
+pub use anystring::anystring;
 extern crate alloc;
 use alloc::vec::Vec;
 pub use callback::*;
@@ -10,11 +11,9 @@ pub struct JSFunction(JSValue);
 
 #[macro_export]
 macro_rules! js {
-    ( $( $x:expr ),* ) => {
+    ($($x:tt)*) => {
         {
-            register_function(stringify!($(
-                $x
-            )*))
+        register_function(anystring!($($x)*))
         }
     };
 }
