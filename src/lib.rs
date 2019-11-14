@@ -6,7 +6,7 @@ pub use callback::*;
 use cstring::{cstr, cstr_to_string};
 pub use web_common::*;
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct JSFunction(JSValue);
 
 #[macro_export]
@@ -27,6 +27,13 @@ impl Drop for JSObject {
 }
 
 impl ToJSValue for JSObject {
+    #[inline]
+    fn to_js_value(&self) -> JSValue {
+        self.0
+    }
+}
+
+impl ToJSValue for &JSObject {
     #[inline]
     fn to_js_value(&self) -> JSValue {
         self.0
