@@ -18,7 +18,7 @@ macro_rules! js {
     };
 }
 
-pub struct JSObject(JSValue);
+pub struct JSObject(pub JSValue);
 
 impl Drop for JSObject {
     fn drop(&mut self) {
@@ -27,7 +27,7 @@ impl Drop for JSObject {
 }
 
 impl JSObject {
-    pub fn value(&self) -> JSValue {
+    pub fn as_js_value(&self) -> JSValue {
         self.0
     }
 }
