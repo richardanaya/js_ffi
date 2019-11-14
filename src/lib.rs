@@ -26,418 +26,687 @@ impl Drop for JSObject {
     }
 }
 
-impl JSObject {
-    pub fn as_js_value(&self) -> JSValue {
+impl ToJSValue for JSObject {
+    #[inline]
+    fn to_js_value(&self) -> JSValue {
         self.0
     }
 }
 
 impl JSFunction {
-    pub fn call_0(&self, obj: JSValue) -> JSValue {
-        unsafe { jsfficall0(obj, self.0) }
+    #[inline]
+    pub fn call_0(&self, obj: impl ToJSValue) -> JSValue {
+        unsafe { jsfficall0(obj.to_js_value(), self.0) }
     }
 
-    pub fn call_1(&self, obj: JSValue, a1_type: JSType, a1: JSValue) -> JSValue {
-        unsafe { jsfficall1(obj, self.0, a1_type, a1) }
+    #[inline]
+    pub fn call_1(&self, obj: impl ToJSValue, a1_type: JSType, a1: impl ToJSValue) -> JSValue {
+        unsafe { jsfficall1(obj.to_js_value(), self.0, a1_type, a1.to_js_value()) }
     }
 
+    #[inline]
     pub fn call_2(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
     ) -> JSValue {
-        unsafe { jsfficall2(obj, self.0, a1_type, a1, a2_type, a2) }
+        unsafe {
+            jsfficall2(
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+            )
+        }
     }
 
+    #[inline]
     pub fn call_3(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
     ) -> JSValue {
-        unsafe { jsfficall3(obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3) }
+        unsafe {
+            jsfficall3(
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+            )
+        }
     }
 
+    #[inline]
     pub fn call_4(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall4(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn call_5(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall5(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn call_6(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall6(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn call_7(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall7(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn call_8(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
         a8_type: JSType,
-        a8: JSValue,
+        a8: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall8(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7, a8_type, a8,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
+                a8_type,
+                a8.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn call_9(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
         a8_type: JSType,
-        a8: JSValue,
+        a8: impl ToJSValue,
         a9_type: JSType,
-        a9: JSValue,
+        a9: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall9(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7, a8_type, a8, a9_type, a9,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
+                a8_type,
+                a8.to_js_value(),
+                a9_type,
+                a9.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn call_10(
         &self,
-        obj: JSValue,
+        obj: impl ToJSValue,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
         a8_type: JSType,
-        a8: JSValue,
+        a8: impl ToJSValue,
         a9_type: JSType,
-        a9: JSValue,
+        a9: impl ToJSValue,
         a10_type: JSType,
-        a10: JSValue,
+        a10: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall10(
-                obj, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7, a8_type, a8, a9_type, a9, a10_type, a10,
+                obj.to_js_value(),
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
+                a8_type,
+                a8.to_js_value(),
+                a9_type,
+                a9.to_js_value(),
+                a10_type,
+                a10.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_0(&self) -> JSValue {
         unsafe { jsfficall0(UNDEFINED, self.0) }
     }
 
-    pub fn invoke_1(&self, a1_type: JSType, a1: JSValue) -> JSValue {
-        unsafe { jsfficall1(UNDEFINED, self.0, a1_type, a1) }
+    #[inline]
+    pub fn invoke_1(&self, a1_type: JSType, a1: impl ToJSValue) -> JSValue {
+        unsafe { jsfficall1(UNDEFINED, self.0, a1_type, a1.to_js_value()) }
     }
 
-    pub fn invoke_2(&self, a1_type: JSType, a1: JSValue, a2_type: JSType, a2: JSValue) -> JSValue {
-        unsafe { jsfficall2(UNDEFINED, self.0, a1_type, a1, a2_type, a2) }
+    #[inline]
+    pub fn invoke_2(
+        &self,
+        a1_type: JSType,
+        a1: impl ToJSValue,
+        a2_type: JSType,
+        a2: impl ToJSValue,
+    ) -> JSValue {
+        unsafe {
+            jsfficall2(
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+            )
+        }
     }
 
+    #[inline]
     pub fn invoke_3(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
     ) -> JSValue {
-        unsafe { jsfficall3(UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3) }
+        unsafe {
+            jsfficall3(
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+            )
+        }
     }
 
+    #[inline]
     pub fn invoke_4(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall4(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_5(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall5(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_6(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall6(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_7(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall7(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_8(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
         a8_type: JSType,
-        a8: JSValue,
+        a8: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall8(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7, a8_type, a8,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
+                a8_type,
+                a8.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_9(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
         a8_type: JSType,
-        a8: JSValue,
+        a8: impl ToJSValue,
         a9_type: JSType,
-        a9: JSValue,
+        a9: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall9(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7, a8_type, a8, a9_type, a9,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
+                a8_type,
+                a8.to_js_value(),
+                a9_type,
+                a9.to_js_value(),
             )
         }
     }
 
+    #[inline]
     pub fn invoke_10(
         &self,
         a1_type: JSType,
-        a1: JSValue,
+        a1: impl ToJSValue,
         a2_type: JSType,
-        a2: JSValue,
+        a2: impl ToJSValue,
         a3_type: JSType,
-        a3: JSValue,
+        a3: impl ToJSValue,
         a4_type: JSType,
-        a4: JSValue,
+        a4: impl ToJSValue,
         a5_type: JSType,
-        a5: JSValue,
+        a5: impl ToJSValue,
         a6_type: JSType,
-        a6: JSValue,
+        a6: impl ToJSValue,
         a7_type: JSType,
-        a7: JSValue,
+        a7: impl ToJSValue,
         a8_type: JSType,
-        a8: JSValue,
+        a8: impl ToJSValue,
         a9_type: JSType,
-        a9: JSValue,
+        a9: impl ToJSValue,
         a10_type: JSType,
-        a10: JSValue,
+        a10: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall10(
-                UNDEFINED, self.0, a1_type, a1, a2_type, a2, a3_type, a3, a4_type, a4, a5_type, a5,
-                a6_type, a6, a7_type, a7, a8_type, a8, a9_type, a9, a10_type, a10,
+                UNDEFINED,
+                self.0,
+                a1_type,
+                a1.to_js_value(),
+                a2_type,
+                a2.to_js_value(),
+                a3_type,
+                a3.to_js_value(),
+                a4_type,
+                a4.to_js_value(),
+                a5_type,
+                a5.to_js_value(),
+                a6_type,
+                a6.to_js_value(),
+                a7_type,
+                a7.to_js_value(),
+                a8_type,
+                a8.to_js_value(),
+                a9_type,
+                a9.to_js_value(),
+                a10_type,
+                a10.to_js_value(),
             )
         }
     }
