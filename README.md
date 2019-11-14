@@ -19,7 +19,7 @@ This project has similaries to Javascript's `<function>.call(<object>,a0,a1,...)
 ## Hello World!
 ```toml
 [dependencies]
-js_ffi = "0.2.0"
+js_ffi = "0.3.0"
 ```
 ```rust
 use js_ffi::*;
