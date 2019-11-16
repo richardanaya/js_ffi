@@ -26,7 +26,7 @@ use js_ffi::*;
 ​
 #[no_mangle]
 pub fn main() -> () {
-    js!(console.log).invoke_1(TYPE_STRING, to_js_string("Hello World"));
+    js!(console.log).invoke_1(JSString::from("Hello World"));
 }
 ```
 ```html
@@ -45,11 +45,11 @@ pub fn main() -> () {
 ## Event Listener
 
 ```rust
-let btn = js!(document.querySelector).invoke_1(TYPE_STRING, to_js_string("#button"));
+let btn = js!(document.querySelector).invoke_1(JSString::from("#button"));
 let cb = create_callback_0(||{
-    js!(window.alert).invoke_1(TYPE_STRING, to_js_string("I was clicked"));
+    js!(window.alert).invoke_1(JSString::from("I was clicked"));
 });
-js!(Node.prototype.addEventListener).call_2(btn,TYPE_STRING, to_js_string("click"),TYPE_FUNCTION,cb)
+js!(Node.prototype.addEventListener).call_2(btn,JSString::from("click"),cb)
 ```
 
 ## Async Example
@@ -63,13 +63,13 @@ async fn run(){
     let console_log = js!(console.log);
     let set_timeout = js!(window.setTimeout);
 
-    console_log.invoke_1(TYPE_STRING,to_js_string("Hello"));
+    console_log.invoke_1(JSString::from("Hello"));
 
     let (future, id) = CallbackFuture::new();
-    set_timeout.invoke_2(TYPE_FUNCTION,id,TYPE_NUM,1000 as JSValue);
+    set_timeout.invoke_2(JSFunction::from(id),JSNumber::from(1000));
     future.await;
 
-    console_log.invoke_1(TYPE_STRING,to_js_string("world!"));
+    console_log.invoke_1(JSString::from("world!"));
 }
 
 #[no_mangle]
@@ -92,7 +92,7 @@ fn main() {
         console.log("say something here too");
         say_loud(x);
     });
-    my_fn.invoke_1(TYPE_STRING,"hey");
+    my_fn.invoke_1(JString::from("hey"));
 }
 ```
 
