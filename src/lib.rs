@@ -20,10 +20,11 @@ macro_rules! js {
 
 pub trait ToJSValue {
     #[inline(Always)]
-    fn to_js_value(&self) -> JSValue;
-    fn to_js_type(&self) -> JSType;
+    fn to_js_value(&mut self) -> JSValue;
+    fn to_js_type(&mut self) -> JSType;
 }
 
+#[derive(Clone)]
 pub struct JSGlobal(pub JSValue);
 
 impl JSGlobal {
@@ -46,24 +47,24 @@ impl JSGlobal {
 
 impl ToJSValue for JSGlobal {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_OBJECT
     }
 }
 
 impl ToJSValue for &JSGlobal {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_OBJECT
     }
 }
@@ -84,28 +85,29 @@ impl Drop for JSObject {
 
 impl ToJSValue for JSObject {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_OBJECT
     }
 }
 
 impl ToJSValue for &JSObject {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_OBJECT
     }
 }
 
+#[derive(Clone)]
 pub struct JSFunction(JSValue);
 
 impl JSFunction {
@@ -120,16 +122,17 @@ impl JSFunction {
 
 impl ToJSValue for JSFunction {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_FUNCTION
     }
 }
 
+#[derive(Clone)]
 pub struct JSBool(JSValue);
 
 impl JSBool {
@@ -141,16 +144,17 @@ impl JSBool {
 
 impl ToJSValue for JSBool {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_BOOL
     }
 }
 
+#[derive(Clone)]
 pub struct JSNumber(JSValue);
 
 impl JSNumber {
@@ -165,16 +169,83 @@ impl JSNumber {
 
 impl ToJSValue for JSNumber {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self.0
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_NUMBER
     }
 }
 
+#[derive(Clone)]
+pub struct WasmMemory;
+
+impl ToJSValue for WasmMemory {
+    #[inline]
+    fn to_js_value(&mut self) -> JSValue {
+        0.0
+    }
+
+    #[inline]
+    fn to_js_type(&mut self) -> JSType {
+        TYPE_MEMORY
+    }
+}
+
+#[derive(Clone)]
+pub struct JSTypedArray<'t, T> {
+    data: &'t Vec<T>,
+    snapshot: Option<TypedArray>,
+}
+
+impl<'t, T> JSTypedArray<'t, T> {
+    #[inline]
+    pub fn from(s: &'t Vec<T>) -> JSTypedArray<'t, T> {
+        JSTypedArray {
+            data: s,
+            snapshot: None,
+        }
+    }
+}
+
+impl<'t, T> ToJSValue for JSTypedArray<'t, T>
+where
+    T: 'static,
+{
+    #[inline]
+    fn to_js_value(&mut self) -> JSValue {
+        let s = to_js_typed_array(self.data);
+        self.snapshot = Some(s);
+        self.snapshot.as_mut().unwrap().to_js_value()
+    }
+
+    #[inline]
+    fn to_js_type(&mut self) -> JSType {
+        if core::any::TypeId::of::<T>() == core::any::TypeId::of::<f32>() {
+            TYPE_F32_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<f64>() {
+            TYPE_F64_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<u8>() {
+            TYPE_UINT8_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<i8>() {
+            TYPE_INT8_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<u16>() {
+            TYPE_UINT16_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<i16>() {
+            TYPE_INT16_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<i32>() {
+            TYPE_INT32_ARRAY
+        } else if core::any::TypeId::of::<T>() == core::any::TypeId::of::<u32>() {
+            TYPE_UINT32_ARRAY
+        } else {
+            panic!("unsupported typed array type")
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct JSString<'t> {
     data: &'t str,
 }
@@ -188,29 +259,34 @@ impl<'t> JSString<'t> {
 
 impl<'t> ToJSValue for JSString<'t> {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         to_js_string(self.data)
     }
 
     #[inline]
-    fn to_js_type(&self) -> JSType {
+    fn to_js_type(&mut self) -> JSType {
         TYPE_STRING
     }
 }
 
 impl JSInvoker {
     #[inline]
-    pub fn call_0(&self, obj: impl ToJSValue) -> JSValue {
+    pub fn call_0(&self, mut obj: impl ToJSValue) -> JSValue {
         unsafe { jsfficall0(obj.to_js_value(), self.0) }
     }
 
     #[inline]
-    pub fn call_1(&self, obj: impl ToJSValue, a1: impl ToJSValue) -> JSValue {
+    pub fn call_1(&self, mut obj: impl ToJSValue, mut a1: impl ToJSValue) -> JSValue {
         unsafe { jsfficall1(obj.to_js_value(), self.0, a1.to_js_type(), a1.to_js_value()) }
     }
 
     #[inline]
-    pub fn call_2(&self, obj: impl ToJSValue, a1: impl ToJSValue, a2: impl ToJSValue) -> JSValue {
+    pub fn call_2(
+        &self,
+        mut obj: impl ToJSValue,
+        mut a1: impl ToJSValue,
+        mut a2: impl ToJSValue,
+    ) -> JSValue {
         unsafe {
             jsfficall2(
                 obj.to_js_value(),
@@ -226,10 +302,10 @@ impl JSInvoker {
     #[inline]
     pub fn call_3(
         &self,
-        obj: impl ToJSValue,
-        a1: impl ToJSValue,
-        a2: impl ToJSValue,
-        a3: impl ToJSValue,
+        mut obj: impl ToJSValue,
+        mut a1: impl ToJSValue,
+        mut a2: impl ToJSValue,
+        mut a3: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall3(
@@ -248,12 +324,12 @@ impl JSInvoker {
     #[inline]
     pub fn call_4(
         &self,
-        obj: impl ToJSValue,
-        a1: impl ToJSValue,
-        a2: impl ToJSValue,
-        a3: impl ToJSValue,
+        mut obj: impl ToJSValue,
+        mut a1: impl ToJSValue,
+        mut a2: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall4(
@@ -274,17 +350,17 @@ impl JSInvoker {
     #[inline]
     pub fn call_5(
         &self,
-        obj: impl ToJSValue,
+        mut obj: impl ToJSValue,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall5(
@@ -307,19 +383,19 @@ impl JSInvoker {
     #[inline]
     pub fn call_6(
         &self,
-        obj: impl ToJSValue,
+        mut obj: impl ToJSValue,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall6(
@@ -344,21 +420,21 @@ impl JSInvoker {
     #[inline]
     pub fn call_7(
         &self,
-        obj: impl ToJSValue,
+        mut obj: impl ToJSValue,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall7(
@@ -385,23 +461,23 @@ impl JSInvoker {
     #[inline]
     pub fn call_8(
         &self,
-        obj: impl ToJSValue,
+        mut obj: impl ToJSValue,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
 
-        a8: impl ToJSValue,
+        mut a8: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall8(
@@ -430,25 +506,25 @@ impl JSInvoker {
     #[inline]
     pub fn call_9(
         &self,
-        obj: impl ToJSValue,
+        mut obj: impl ToJSValue,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
 
-        a8: impl ToJSValue,
+        mut a8: impl ToJSValue,
 
-        a9: impl ToJSValue,
+        mut a9: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall9(
@@ -479,27 +555,27 @@ impl JSInvoker {
     #[inline]
     pub fn call_10(
         &self,
-        obj: impl ToJSValue,
+        mut obj: impl ToJSValue,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
 
-        a8: impl ToJSValue,
+        mut a8: impl ToJSValue,
 
-        a9: impl ToJSValue,
+        mut a9: impl ToJSValue,
 
-        a10: impl ToJSValue,
+        mut a10: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall10(
@@ -535,12 +611,12 @@ impl JSInvoker {
     }
 
     #[inline]
-    pub fn invoke_1(&self, a1: impl ToJSValue) -> JSValue {
+    pub fn invoke_1(&self, mut a1: impl ToJSValue) -> JSValue {
         unsafe { jsfficall1(UNDEFINED, self.0, a1.to_js_type(), a1.to_js_value()) }
     }
 
     #[inline]
-    pub fn invoke_2(&self, a1: impl ToJSValue, a2: impl ToJSValue) -> JSValue {
+    pub fn invoke_2(&self, mut a1: impl ToJSValue, mut a2: impl ToJSValue) -> JSValue {
         unsafe {
             jsfficall2(
                 UNDEFINED,
@@ -554,7 +630,12 @@ impl JSInvoker {
     }
 
     #[inline]
-    pub fn invoke_3(&self, a1: impl ToJSValue, a2: impl ToJSValue, a3: impl ToJSValue) -> JSValue {
+    pub fn invoke_3(
+        &self,
+        mut a1: impl ToJSValue,
+        mut a2: impl ToJSValue,
+        mut a3: impl ToJSValue,
+    ) -> JSValue {
         unsafe {
             jsfficall3(
                 UNDEFINED,
@@ -573,13 +654,13 @@ impl JSInvoker {
     pub fn invoke_4(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall4(
@@ -601,15 +682,15 @@ impl JSInvoker {
     pub fn invoke_5(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall5(
@@ -633,17 +714,17 @@ impl JSInvoker {
     pub fn invoke_6(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall6(
@@ -669,19 +750,19 @@ impl JSInvoker {
     pub fn invoke_7(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall7(
@@ -709,21 +790,21 @@ impl JSInvoker {
     pub fn invoke_8(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
 
-        a8: impl ToJSValue,
+        mut a8: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall8(
@@ -753,23 +834,23 @@ impl JSInvoker {
     pub fn invoke_9(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
 
-        a8: impl ToJSValue,
+        mut a8: impl ToJSValue,
 
-        a9: impl ToJSValue,
+        mut a9: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall9(
@@ -801,25 +882,25 @@ impl JSInvoker {
     pub fn invoke_10(
         &self,
 
-        a1: impl ToJSValue,
+        mut a1: impl ToJSValue,
 
-        a2: impl ToJSValue,
+        mut a2: impl ToJSValue,
 
-        a3: impl ToJSValue,
+        mut a3: impl ToJSValue,
 
-        a4: impl ToJSValue,
+        mut a4: impl ToJSValue,
 
-        a5: impl ToJSValue,
+        mut a5: impl ToJSValue,
 
-        a6: impl ToJSValue,
+        mut a6: impl ToJSValue,
 
-        a7: impl ToJSValue,
+        mut a7: impl ToJSValue,
 
-        a8: impl ToJSValue,
+        mut a8: impl ToJSValue,
 
-        a9: impl ToJSValue,
+        mut a9: impl ToJSValue,
 
-        a10: impl ToJSValue,
+        mut a10: impl ToJSValue,
     ) -> JSValue {
         unsafe {
             jsfficall10(
@@ -1046,21 +1127,17 @@ where
 }
 
 #[repr(C)]
+#[derive(Clone)]
 pub struct TypedArray {
     length: u32,
     pointer: u32,
     data_type: JSType,
 }
 
-impl ToJSValue for TypedArray {
+impl TypedArray {
     #[inline]
-    fn to_js_value(&self) -> JSValue {
+    fn to_js_value(&mut self) -> JSValue {
         self as *const _ as usize as JSValue
-    }
-
-    #[inline]
-    fn to_js_type(&self) -> JSType {
-        self.data_type
     }
 }
 
