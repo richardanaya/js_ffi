@@ -18,10 +18,10 @@ fn main() {
 }
 
 struct API {
-    query_selector_handle: Invoker,
-    get_context_handle: Invoker,
-    fill_style_handle: Invoker,
-    fill_rect_handle: Invoker,
+    query_selector_handle: JSInvoker,
+    get_context_handle: JSInvoker,
+    fill_style_handle: JSInvoker,
+    fill_rect_handle: JSInvoker,
 }
 
 impl API {
@@ -30,29 +30,34 @@ impl API {
             query_selector_handle: js!(document.querySelector),
             get_context_handle: js!(HTMLCanvasElement.prototype.getContext),
             fill_style_handle: js!(function(color){
-                this.fillStyle = color; 
+                this.fillStyle = color;
             }),
             fill_rect_handle: js!(CanvasRenderingContext2D.prototype.fillRect),
         }
     }
-    
+
     fn query_selector(&self, s: &str) -> JSObject {
-        JSObject(self.query_selector_handle
-            .call_1(JSGlobal::document(),JSString::from(s)))
+        JSObject(
+            self.query_selector_handle
+                .call_1(JSGlobal::document(), JSString::from(s)),
+        )
     }
 
     fn get_context(&self, o: &JSObject, s: &str) -> JSObject {
-        JSObject(self.get_context_handle
-            .call_1(o,JSString::from(s)))
+        JSObject(self.get_context_handle.call_1(o, JSString::from(s)))
     }
 
     fn fill_style(&self, o: &JSObject, s: &str) {
-        self.fill_style_handle
-            .call_1(o,JSString::from(s));
+        self.fill_style_handle.call_1(o, JSString::from(s));
     }
 
     fn fill_rect(&self, o: &JSObject, x: f64, y: f64, w: f64, h: f64) {
-        self.fill_rect_handle
-            .call_4(o,JSNumber::from(x), JSNumber::from(y),JSNumber::from(w),JSNumber::from(h));
+        self.fill_rect_handle.call_4(
+            o,
+            JSNumber::from(x),
+            JSNumber::from(y),
+            JSNumber::from(w),
+            JSNumber::from(h),
+        );
     }
 }

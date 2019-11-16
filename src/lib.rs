@@ -7,7 +7,7 @@ use cstring::{cstr, cstr_to_string};
 pub use web_common::*;
 
 #[derive(Clone)]
-pub struct Invoker(JSValue);
+pub struct JSInvoker(JSValue);
 
 #[macro_export]
 macro_rules! js {
@@ -165,7 +165,7 @@ impl<'t> ToJSValue for JSString<'t> {
 }
 
 
-impl Invoker {
+impl JSInvoker {
     #[inline]
     pub fn call_0(&self, obj: impl ToJSValue) -> JSValue {
         unsafe { jsfficall0(obj.to_js_value(), self.0) }
@@ -974,8 +974,8 @@ pub fn release_object(obj: JSValue) {
     unsafe { jsffirelease(obj) }
 }
 
-pub fn register_function(code: &str) -> Invoker {
-    unsafe { Invoker(jsffiregister(cstr(code))) }
+pub fn register_function(code: &str) -> JSInvoker {
+    unsafe { JSInvoker(jsffiregister(cstr(code))) }
 }
 
 pub fn to_string(c: JSValue) -> alloc::string::String {
