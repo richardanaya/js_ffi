@@ -4,7 +4,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 pub use callback::*;
 use cstring::{cstr, cstr_to_string};
-pub use web_common::*;
+use web_common::*;
 
 #[derive(Clone)]
 pub struct JSInvoker(JSValue);
@@ -30,8 +30,19 @@ impl JSGlobal {
     pub fn document() -> JSGlobal {
         JSGlobal(DOCUMENT)
     }
-}
 
+    pub fn undefined() -> JSGlobal {
+        JSGlobal(UNDEFINED)
+    }
+
+    pub fn null() -> JSGlobal {
+        JSGlobal(NULL)
+    }
+
+    pub fn window() -> JSGlobal {
+        JSGlobal(WINDOW)
+    }
+}
 
 impl ToJSValue for JSGlobal {
     #[inline]
@@ -99,7 +110,10 @@ pub struct JSFunction(JSValue);
 
 impl JSFunction {
     #[inline]
-    pub fn from<T>(v:T) -> JSFunction where T:Clone+Into<f64> {
+    pub fn from<T>(v: T) -> JSFunction
+    where
+        T: Clone + Into<f64>,
+    {
         JSFunction(v.clone().into() as JSValue)
     }
 }
@@ -120,7 +134,10 @@ pub struct JSNumber(JSValue);
 
 impl JSNumber {
     #[inline]
-    pub fn from<T>(v:T) -> JSNumber where T:Clone+Into<f64> {
+    pub fn from<T>(v: T) -> JSNumber
+    where
+        T: Clone + Into<f64>,
+    {
         JSNumber(v.clone().into() as JSValue)
     }
 }
@@ -138,17 +155,13 @@ impl ToJSValue for JSNumber {
 }
 
 pub struct JSString<'t> {
-    data:&'t str
+    data: &'t str,
 }
-
-
 
 impl<'t> JSString<'t> {
     #[inline]
-    pub fn from(s:&'t str) -> JSString<'t> {
-        JSString {
-            data:s
-        }
+    pub fn from(s: &'t str) -> JSString<'t> {
+        JSString { data: s }
     }
 }
 
@@ -163,7 +176,6 @@ impl<'t> ToJSValue for JSString<'t> {
         TYPE_STRING
     }
 }
-
 
 impl JSInvoker {
     #[inline]
