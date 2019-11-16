@@ -53,6 +53,7 @@ macro_rules! js {
 pub trait ToJSValue {
     #[inline(Always)]
     fn to_js_value(&mut self) -> JSValue;
+    #[inline(Always)]
     fn to_js_type(&mut self) -> JSType;
 }
 
