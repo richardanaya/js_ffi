@@ -1,10 +1,17 @@
 #![no_std]
+use alloc::boxed::Box;
+use alloc::sync::Arc;
+use core::{
+    future::Future,
+    pin::Pin,
+    task::{Context, Poll, Waker},
+};
+use spin::Mutex;
 extern crate alloc;
 #[macro_use]
 extern crate lazy_static;
 use alloc::vec::Vec;
 pub use anystring::anystring;
-pub use callback::*;
 use cstring::{cstr, cstr_to_string};
 
 pub type JSValue = f64;
@@ -58,7 +65,7 @@ pub trait ToJSValue {
 }
 
 #[derive(Clone)]
-pub struct JSGlobal(pub JSValue);
+pub struct JSGlobal(JSValue);
 
 impl JSGlobal {
     pub fn document() -> JSGlobal {
@@ -102,13 +109,7 @@ impl ToJSValue for &JSGlobal {
     }
 }
 
-pub struct JSObject(pub JSValue);
-
-impl JSObject {
-    pub fn document() -> JSObject {
-        JSObject(DOCUMENT)
-    }
-}
+pub struct JSObject(JSValue);
 
 impl Drop for JSObject {
     fn drop(&mut self) {
@@ -241,6 +242,24 @@ impl<'t, T> JSTypedArray<'t, T> {
             snapshot: None,
         }
     }
+
+    pub fn to_vec<Q>(ptr: JSValue) -> Vec<Q>
+    where
+        Q: Copy,
+    {
+        unsafe {
+            let start = ptr as usize;
+            let lptr = start as *const usize;
+            let length = *lptr;
+            let mut v = Vec::with_capacity(length);
+            let mut data_ptr = ptr as usize + core::mem::size_of::<usize>();
+            for _ in 0..length {
+                v.push(*(data_ptr as *const Q));
+                data_ptr += core::mem::size_of::<Q>();
+            }
+            v
+        }
+    }
 }
 
 impl<'t, T> ToJSValue for JSTypedArray<'t, T>
@@ -288,12 +307,16 @@ impl<'t> JSString<'t> {
     pub fn from(s: &'t str) -> JSString<'t> {
         JSString { data: s }
     }
+
+    pub fn to_string(c: JSValue) -> alloc::string::String {
+        cstr_to_string(c as i32)
+    }    
 }
 
 impl<'t> ToJSValue for JSString<'t> {
     #[inline]
     fn to_js_value(&mut self) -> JSValue {
-        to_js_string(self.data)
+        cstr(self.data) as JSValue
     }
 
     #[inline]
@@ -1125,15 +1148,8 @@ pub fn register_function(code: &str) -> JSInvoker {
     unsafe { JSInvoker(jsffiregister(cstr(code))) }
 }
 
-pub fn to_string(c: JSValue) -> alloc::string::String {
-    cstr_to_string(c as i32)
-}
 
-pub fn to_js_string(s: &str) -> JSValue {
-    cstr(s) as JSValue
-}
-
-pub fn to_js_typed_array<T>(s: &[T]) -> TypedArray {
+fn to_js_typed_array<T>(s: &[T]) -> TypedArray {
     TypedArray {
         length: s.len() as u32,
         pointer: s.as_ptr() as u32,
@@ -1141,27 +1157,9 @@ pub fn to_js_typed_array<T>(s: &[T]) -> TypedArray {
     }
 }
 
-pub fn to_typed_array<T>(ptr: JSValue) -> Vec<T>
-where
-    T: Copy,
-{
-    unsafe {
-        let start = ptr as usize;
-        let lptr = start as *const usize;
-        let length = *lptr;
-        let mut v = Vec::with_capacity(length);
-        let mut data_ptr = ptr as usize + core::mem::size_of::<usize>();
-        for _ in 0..length {
-            v.push(*(data_ptr as *const T));
-            data_ptr += core::mem::size_of::<T>();
-        }
-        v
-    }
-}
-
 #[repr(C)]
 #[derive(Clone)]
-pub struct TypedArray {
+struct TypedArray {
     length: u32,
     pointer: u32,
     data_type: JSType,
@@ -1175,7 +1173,7 @@ impl TypedArray {
 }
 
 #[no_mangle]
-pub fn jsfficallback(
+fn jsfficallback(
     id: u32,
     a1: JSValue,
     a2: JSValue,
@@ -1207,13 +1205,250 @@ pub fn jsfficallback(
 }
 
 #[no_mangle]
-pub fn jsffimalloc(size: i32) -> *mut u8 {
+fn jsffimalloc(size: i32) -> *mut u8 {
     let mut buf = Vec::with_capacity(size as usize);
     let ptr = buf.as_mut_ptr();
     core::mem::forget(buf);
     ptr
 }
 
-mod callback;
 
-pub use callback::*;
+enum CallbackHandler {
+    Callback0(Box<dyn FnMut() -> () + Send + 'static>),
+    Callback1(Box<dyn FnMut(JSValue) -> () + Send + 'static>),
+    Callback2(Box<dyn FnMut(JSValue, JSValue) -> () + Send + 'static>),
+    Callback3(Box<dyn FnMut(JSValue, JSValue, JSValue) -> () + Send + 'static>),
+    Callback4(Box<dyn FnMut(JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static>),
+    Callback5(Box<dyn FnMut(JSValue, JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static>),
+    Callback6(
+        Box<dyn FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static>,
+    ),
+    Callback7(
+        Box<
+            dyn FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> ()
+                + Send
+                + 'static,
+        >,
+    ),
+    Callback8(
+        Box<
+            dyn FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> ()
+                + Send
+                + 'static,
+        >,
+    ),
+    Callback9(
+        Box<
+            dyn FnMut(
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                ) -> ()
+                + Send
+                + 'static,
+        >,
+    ),
+    Callback10(
+        Box<
+            dyn FnMut(
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                    JSValue,
+                ) -> ()
+                + Send
+                + 'static,
+        >,
+    ),
+}
+
+type CallbackHandle = u32;
+
+struct CallbackManager {
+    cur_id: CallbackHandle,
+    keys: Vec<CallbackHandle>,
+    handlers: Vec<Arc<Mutex<CallbackHandler>>>,
+}
+
+lazy_static! {
+    static ref INSTANCE: Mutex<CallbackManager> = {
+        Mutex::new(CallbackManager {
+            cur_id: 0,
+            keys: Vec::new(),
+            handlers: Vec::new(),
+        })
+    };
+}
+
+fn get_callbacks() -> &'static Mutex<CallbackManager> {
+    &INSTANCE
+}
+
+fn get_callback(id: CallbackHandle) -> Option<Arc<Mutex<CallbackHandler>>> {
+    let cbs = get_callbacks().lock();
+    let index = cbs.keys.iter().position(|&r| r == id);
+    if let Some(i) = index {
+        let handler_ref = cbs.handlers.get(i).unwrap().clone();
+        core::mem::drop(cbs);
+        Some(handler_ref)
+    } else {
+        None
+    }
+}
+
+pub fn remove_callback(id: CallbackHandle) {
+    let mut cbs = get_callbacks().lock();
+    let index = cbs.keys.iter().position(|&r| r == id);
+    if let Some(i) = index {
+        cbs.keys.remove(i);
+        cbs.handlers.remove(i);
+    }
+}
+
+fn create_callback(cb: CallbackHandler) -> JSFunction {
+    let mut h = get_callbacks().lock();
+    h.cur_id += 1;
+    let id = h.cur_id;
+    h.keys.push(id);
+    h.handlers.push(Arc::new(Mutex::new(cb)));
+    return JSFunction::from(id);
+}
+
+pub fn create_callback_0(cb: impl FnMut() -> () + Send + 'static) -> JSFunction {
+    create_callback(CallbackHandler::Callback0(Box::new(cb)))
+}
+
+pub fn create_callback_1(cb: impl FnMut(JSValue) -> () + Send + 'static) -> JSFunction {
+    create_callback(CallbackHandler::Callback1(Box::new(cb)))
+}
+
+pub fn create_callback_2(cb: impl FnMut(JSValue, JSValue) -> () + Send + 'static) -> JSFunction {
+    create_callback(CallbackHandler::Callback2(Box::new(cb)))
+}
+
+pub fn create_callback_3(
+    cb: impl FnMut(JSValue, JSValue, JSValue) -> () + Send + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback3(Box::new(cb)))
+}
+
+pub fn create_callback_4(
+    cb: impl FnMut(JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback4(Box::new(cb)))
+}
+
+pub fn create_callback_5(
+    cb: impl FnMut(JSValue, JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback5(Box::new(cb)))
+}
+
+pub fn create_callback_6(
+    cb: impl FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback6(Box::new(cb)))
+}
+
+pub fn create_callback_7(
+    cb: impl FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> () + Send + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback7(Box::new(cb)))
+}
+
+pub fn create_callback_8(
+    cb: impl FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> ()
+        + Send
+        + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback8(Box::new(cb)))
+}
+
+pub fn create_callback_9(
+    cb: impl FnMut(JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue, JSValue) -> ()
+        + Send
+        + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback9(Box::new(cb)))
+}
+
+pub fn create_callback_10(
+    cb: impl FnMut(
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+            JSValue,
+        ) -> ()
+        + Send
+        + 'static,
+) -> JSFunction {
+    create_callback(CallbackHandler::Callback10(Box::new(cb)))
+}
+
+struct CallbackFuture {
+    shared_state: Arc<Mutex<SharedState>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState {
+    completed: bool,
+    waker: Option<Waker>,
+    result: JSValue,
+}
+
+impl Future for CallbackFuture {
+    type Output = JSValue;
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState {
+            completed: false,
+            waker: None,
+            result: UNDEFINED,
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback1(Box::new(move |v: JSValue| {
+            let mut shared_state = thread_shared_state.lock();
+            shared_state.completed = true;
+            shared_state.result = v;
+            if let Some(waker) = shared_state.waker.take() {
+                core::mem::drop(shared_state);
+                waker.wake()
+            }
+        })));
+        (CallbackFuture { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_0() -> (impl Future, JSFunction) {
+    CallbackFuture::new()
+}
