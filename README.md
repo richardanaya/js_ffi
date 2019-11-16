@@ -19,7 +19,7 @@ This project has similaries to Javascript's `<function>.call(<object>,a0,a1,...)
 ## Hello World!
 ```toml
 [dependencies]
-js_ffi = "0.3.0"
+js_ffi = "0.5"
 ```
 ```rust
 use js_ffi::*;
@@ -39,17 +39,24 @@ pub fn main() -> () {
 1. Get a handle to some Javascript function using the `js!` macro
 2. If you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
 3. If you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
-4. For each argument you are passing specify the type of the argument (`TYPE_STRING`,`TYPE_NUMBER`, etc.) and then the argument as a `JSValue`.
-5. Reuse function handles by putting them in global state if necessary.
+4. For each argument you are passing specify the type of the argument us the correct type convert `JSString::from`,`JSNumber::from`, etc.
+5. Reuse function handles as much as possible.
 
 ## Event Listener
 
 ```rust
-let btn = js!(document.querySelector).invoke_1(JSString::from("#button"));
-let cb = create_callback_0(||{
-    js!(window.alert).invoke_1(JSString::from("I was clicked"));
-});
-js!(Node.prototype.addEventListener).call_2(btn,JSString::from("click"),cb)
+use js_ffi::*;
+
+#[no_mangle]
+fn main() {
+    let btn = JSObject(
+        js!(document.querySelector).call_1(JSGlobal::document(), JSString::from("#button")),
+    );
+    let cb = create_callback_0(|| {
+        js!(window.alert).invoke_1(JSString::from("I was clicked"));
+    });
+    js!(Node.prototype.addEventListener).call_2(btn, JSString::from("click"), cb);
+}
 ```
 
 ## Async Example
