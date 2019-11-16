@@ -919,8 +919,9 @@ pub struct TypedArray {
     pointer: u32,
 }
 
-impl TypedArray {
-    pub fn as_js_ptr(&self) -> JSValue {
+impl ToJSValue for TypedArray {
+    #[inline]
+    fn to_js_value(&self) -> JSValue {
         self as *const _ as usize as JSValue
     }
 }
