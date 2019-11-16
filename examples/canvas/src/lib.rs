@@ -2,12 +2,7 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let api = API {
-        query_selector_handle: js!(document.querySelector),
-        get_context_handle: js!(HTMLCanvasElement.prototype.getContext),
-        fill_style_handle: js!((s)=>{this.fillStyle = s;}),
-        fill_rect_handle: js!(CanvasRenderingContext2D.prototype.fillRect),
-    };
+    let api = API::new();
 
     let screen = api.query_selector("#screen");
     let ctx = api.get_context(&screen, "2d");
@@ -30,6 +25,17 @@ struct API {
 }
 
 impl API {
+    fn new() -> API {
+        API {
+            query_selector_handle: js!(document.querySelector),
+            get_context_handle: js!(HTMLCanvasElement.prototype.getContext),
+            fill_style_handle: js!(function(color){
+                this.fillStyle = color; 
+            }),
+            fill_rect_handle: js!(CanvasRenderingContext2D.prototype.fillRect),
+        }
+    }
+    
     fn query_selector(&self, s: &str) -> JSObject {
         JSObject(self.query_selector_handle
             .call_1(JSGlobal::document(),JSString::from(s)))
