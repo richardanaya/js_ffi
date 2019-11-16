@@ -130,6 +130,27 @@ impl ToJSValue for JSFunction {
     }
 }
 
+pub struct JSBool(JSValue);
+
+impl JSBool {
+    #[inline]
+    pub fn from(b: bool) -> JSBool {
+        JSBool(if b { TRUE } else { FALSE })
+    }
+}
+
+impl ToJSValue for JSBool {
+    #[inline]
+    fn to_js_value(&self) -> JSValue {
+        self.0
+    }
+
+    #[inline]
+    fn to_js_type(&self) -> JSType {
+        TYPE_BOOL
+    }
+}
+
 pub struct JSNumber(JSValue);
 
 impl JSNumber {
