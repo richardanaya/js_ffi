@@ -28,9 +28,9 @@ pub fn main() -> () {
 }
 
 struct API {
-    log_handle: JSFunction,
-    set_timeout_handle: JSFunction,
-    set_interval_handle: JSFunction,
+    log_handle: Invoker,
+    set_timeout_handle: Invoker,
+    set_interval_handle: Invoker,
 }
 
 impl API {
