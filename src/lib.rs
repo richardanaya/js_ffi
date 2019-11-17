@@ -45,7 +45,7 @@ pub const CONSOLE: JSValue = 2.0;
 pub const WINDOW: JSValue = 3.0;
 pub const DOCUMENT: JSValue = 4.0;
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct JSInvoker(JSValue);
 
 #[macro_export]
@@ -64,7 +64,7 @@ pub trait ToJSValue {
     fn to_js_type(&mut self) -> JSType;
 }
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct JSGlobal(JSValue);
 
 impl JSGlobal {
@@ -141,7 +141,7 @@ impl ToJSValue for &JSObject {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct JSFunction(JSValue);
 
 impl JSFunction {
@@ -166,7 +166,7 @@ impl ToJSValue for JSFunction {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct JSBool(JSValue);
 
 impl JSBool {
@@ -188,7 +188,7 @@ impl ToJSValue for JSBool {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct JSNumber(JSValue);
 
 impl JSNumber {
@@ -213,7 +213,7 @@ impl ToJSValue for JSNumber {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct WasmMemory;
 
 impl ToJSValue for WasmMemory {
@@ -297,7 +297,7 @@ where
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 pub struct JSString<'t> {
     data: &'t str,
 }
@@ -1158,7 +1158,7 @@ fn to_js_typed_array<T>(s: &[T]) -> TypedArray {
 }
 
 #[repr(C)]
-#[derive(Clone)]
+#[derive(Clone,Copy)]
 struct TypedArray {
     length: u32,
     pointer: u32,
