@@ -109,7 +109,7 @@ impl ToJSValue for &JSGlobal {
     }
 }
 
-pub struct JSObject(JSValue);
+pub struct JSObject(pub JSValue);
 
 impl Drop for JSObject {
     fn drop(&mut self) {
