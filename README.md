@@ -35,11 +35,9 @@ pub fn main() -> () {
 
 ## How it works
 
-1. Get a handle to some Javascript function using the `js!` macro
-2. If you are invoking this function as a regular function, use the appropriate invoke function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
-3. If you are invoking this function as a method of an objected represented by a `JSValue`, use the appropriate invoke function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
-4. For each argument you are passing specify the type of the argument us the correct type convert `JSString::from`,`JSNumber::from`, etc.
-5. Reuse function handles as much as possible.
+1. Get a handle to some Javascript function using the `js!` macro. Re-use this handle as often as possible.
+2. If you are invoking this function as a regular function, use the appropriate `invoke_*` function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
+3. If you are invoking this function as a method of an object represented by a `JSValue`, use the appropriate `call_*` function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
 
 ## Event Listener
 
