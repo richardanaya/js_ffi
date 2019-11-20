@@ -2,11 +2,9 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let btn = JSObject(
-        js!(document.querySelector).call_1(JSGlobal::document(), JSString::from("#button")),
-    );
+    let btn = js!(document.querySelector).call_1(DOCUMENT, "#button");
     let cb = create_callback_0(|| {
-        js!(window.alert).invoke_1(JSString::from("I was clicked"));
+        js!(window.alert).invoke_1("I was clicked");
     });
-    js!(Node.prototype.addEventListener).call_2(btn, JSString::from("click"), cb);
+    js!(Node.prototype.addEventListener).call_2(btn, "click", cb);
 }

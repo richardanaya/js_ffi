@@ -19,14 +19,14 @@ This project has similaries to Javascript's `<function>.call(<object>,a0,a1,...)
 ## Hello World!
 ```toml
 [dependencies]
-js_ffi = "0.5"
+js_ffi = "0.6"
 ```
 ```rust
 use js_ffi::*;
 ​
 #[no_mangle]
 pub fn main() -> () {
-    js!(console.log).invoke_1(JSString::from("Hello World"));
+    js!(console.log).invoke_1("Hello World");
 }
 ```
 ```html
@@ -49,13 +49,11 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let btn = JSObject(
-        js!(document.querySelector).call_1(JSGlobal::document(), JSString::from("#button")),
-    );
+    let btn = js!(document.querySelector).call_1(DOCUMENT, "#button");
     let cb = create_callback_0(|| {
-        js!(window.alert).invoke_1(JSString::from("I was clicked"));
+        js!(window.alert).invoke_1("I was clicked");
     });
-    js!(Node.prototype.addEventListener).call_2(btn, JSString::from("click"), cb);
+    js!(Node.prototype.addEventListener).call_2(btn, "click", cb);
 }
 ```
 
@@ -70,13 +68,13 @@ async fn run(){
     let console_log = js!(console.log);
     let set_timeout = js!(window.setTimeout);
 
-    console_log.invoke_1(JSString::from("Hello"));
+    console_log.invoke_1("Hello");
 
-    let (future, id) = CallbackFuture::new();
-    set_timeout.invoke_2(JSFunction::from(id),JSNumber::from(1000));
+    let (future, cb) = create_callback_future_0();
+    set_timeout.invoke_2(cb,1000);
     future.await;
 
-    console_log.invoke_1(JSString::from("world!"));
+    console_log.invoke_1("world!");
 }
 
 #[no_mangle]
@@ -87,7 +85,7 @@ pub fn main() -> () {
 
 ## Third Party
 
-Wrap third party libraries. Anything function in global space should be able to be wrapped and invoked. You can also specify ad hoc functions.
+Wrap third party libraries. Anything function in global space should be able to be wrapped and invoked.
 
 ```rust
 use js_ffi::*;
@@ -99,7 +97,7 @@ fn main() {
         console.log("say something here too");
         say_loud(x);
     });
-    my_fn.invoke_1(JString::from("hey"));
+    my_fn.invoke_1("hey");
 }
 ```
 

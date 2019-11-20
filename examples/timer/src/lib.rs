@@ -1,3 +1,4 @@
+use core::future::Future;
 use executor::Executor;
 use js_ffi::*;
 use once_cell::sync::Lazy;
@@ -35,19 +36,17 @@ struct API {
 
 impl API {
     fn console_log(&self, msg: &str) {
-        self.log_handle.invoke_1(JSString::from(msg));
+        self.log_handle.invoke_1(msg);
     }
 
     fn window_set_interval(&self, cb: impl FnMut() -> () + Send + 'static, millis: i32) {
-        let id = create_callback_0(cb);
-        self.set_interval_handle
-            .invoke_2(JSFunction::from(id), JSNumber::from(millis));
+        let cb = create_callback_0(cb);
+        self.set_interval_handle.invoke_2(cb, millis);
     }
 
-    fn window_set_timeout(&self, millis: i32) -> CallbackFuture {
-        let (future, id) = CallbackFuture::new();
-        self.set_timeout_handle
-            .invoke_2(JSFunction::from(id), JSNumber::from(millis));
+    fn window_set_timeout(&self, millis: i32) -> impl Future {
+        let (future, cb) = create_callback_future_0();
+        self.set_timeout_handle.invoke_2(cb, millis);
         future
     }
 }
