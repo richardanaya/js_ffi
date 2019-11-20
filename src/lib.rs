@@ -1471,18 +1471,68 @@ pub fn create_callback_10(
     create_callback(CallbackHandler::Callback10(Box::new(cb)))
 }
 
-struct CallbackFuture {
-    shared_state: Arc<Mutex<SharedState>>,
+struct CallbackFuture0 {
+    shared_state: Arc<Mutex<SharedState0>>,
 }
 
 /// Shared state between the future and the waiting thread
-struct SharedState {
+struct SharedState0 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (),
+}
+
+impl Future for CallbackFuture0 {
+    type Output = ();
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture0 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState0 {
+            completed: false,
+            waker: None,
+            result: (),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback0(Box::new(move || {
+            let mut shared_state = thread_shared_state.lock();
+            shared_state.completed = true;
+            shared_state.result = ();
+            if let Some(waker) = shared_state.waker.take() {
+                core::mem::drop(shared_state);
+                waker.wake()
+            }
+        })));
+        (CallbackFuture0 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_0() -> (impl Future, JSFunction) {
+    CallbackFuture0::new()
+}
+
+struct CallbackFuture1 {
+    shared_state: Arc<Mutex<SharedState1>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState1 {
     completed: bool,
     waker: Option<Waker>,
     result: JSValue,
 }
 
-impl Future for CallbackFuture {
+impl Future for CallbackFuture1 {
     type Output = JSValue;
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let mut shared_state = self.shared_state.lock();
@@ -1495,9 +1545,9 @@ impl Future for CallbackFuture {
     }
 }
 
-impl CallbackFuture {
+impl CallbackFuture1 {
     fn new() -> (Self, JSFunction) {
-        let shared_state = Arc::new(Mutex::new(SharedState {
+        let shared_state = Arc::new(Mutex::new(SharedState1 {
             completed: false,
             waker: None,
             result: UNDEFINED,
@@ -1513,10 +1563,597 @@ impl CallbackFuture {
                 waker.wake()
             }
         })));
-        (CallbackFuture { shared_state }, id)
+        (CallbackFuture1 { shared_state }, id)
     }
 }
 
-pub fn create_callback_future_0() -> (impl Future, JSFunction) {
-    CallbackFuture::new()
+pub fn create_callback_future_1() -> (impl Future, JSFunction) {
+    CallbackFuture1::new()
+}
+
+struct CallbackFuture2 {
+    shared_state: Arc<Mutex<SharedState2>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState2 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (JSValue, JSValue),
+}
+
+impl Future for CallbackFuture2 {
+    type Output = (JSValue, JSValue);
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture2 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState2 {
+            completed: false,
+            waker: None,
+            result: (UNDEFINED, UNDEFINED),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback2(Box::new(
+            move |a1: JSValue, a2: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture2 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_2() -> (impl Future, JSFunction) {
+    CallbackFuture2::new()
+}
+
+struct CallbackFuture3 {
+    shared_state: Arc<Mutex<SharedState3>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState3 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (JSValue, JSValue, JSValue),
+}
+
+impl Future for CallbackFuture3 {
+    type Output = (JSValue, JSValue, JSValue);
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture3 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState3 {
+            completed: false,
+            waker: None,
+            result: (UNDEFINED, UNDEFINED, UNDEFINED),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback3(Box::new(
+            move |a1: JSValue, a2: JSValue, a3: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture3 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_3() -> (impl Future, JSFunction) {
+    CallbackFuture3::new()
+}
+
+struct CallbackFuture4 {
+    shared_state: Arc<Mutex<SharedState4>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState4 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (JSValue, JSValue, JSValue, JSValue),
+}
+
+impl Future for CallbackFuture4 {
+    type Output = (JSValue, JSValue, JSValue, JSValue);
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture4 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState4 {
+            completed: false,
+            waker: None,
+            result: (UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback4(Box::new(
+            move |a1: JSValue, a2: JSValue, a3: JSValue, a4: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture4 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_4() -> (impl Future, JSFunction) {
+    CallbackFuture4::new()
+}
+
+struct CallbackFuture5 {
+    shared_state: Arc<Mutex<SharedState5>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState5 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (JSValue, JSValue, JSValue, JSValue, JSValue),
+}
+
+impl Future for CallbackFuture5 {
+    type Output = (JSValue, JSValue, JSValue, JSValue, JSValue);
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture5 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState5 {
+            completed: false,
+            waker: None,
+            result: (UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback5(Box::new(
+            move |a1: JSValue, a2: JSValue, a3: JSValue, a4: JSValue, a5: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4, a5);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture5 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_5() -> (impl Future, JSFunction) {
+    CallbackFuture5::new()
+}
+
+struct CallbackFuture6 {
+    shared_state: Arc<Mutex<SharedState6>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState6 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (JSValue, JSValue, JSValue, JSValue, JSValue, JSValue),
+}
+
+impl Future for CallbackFuture6 {
+    type Output = (JSValue, JSValue, JSValue, JSValue, JSValue, JSValue);
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture6 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState6 {
+            completed: false,
+            waker: None,
+            result: (
+                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+            ),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback6(Box::new(
+            move |a1: JSValue, a2: JSValue, a3: JSValue, a4: JSValue, a5: JSValue, a6: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4, a5, a6);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture6 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_6() -> (impl Future, JSFunction) {
+    CallbackFuture6::new()
+}
+
+struct CallbackFuture7 {
+    shared_state: Arc<Mutex<SharedState7>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState7 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    ),
+}
+
+impl Future for CallbackFuture7 {
+    type Output = (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    );
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture7 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState7 {
+            completed: false,
+            waker: None,
+            result: (
+                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+            ),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback7(Box::new(
+            move |a1: JSValue,
+                  a2: JSValue,
+                  a3: JSValue,
+                  a4: JSValue,
+                  a5: JSValue,
+                  a6: JSValue,
+                  a7: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4, a5, a6, a7);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture7 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_7() -> (impl Future, JSFunction) {
+    CallbackFuture7::new()
+}
+
+struct CallbackFuture8 {
+    shared_state: Arc<Mutex<SharedState8>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState8 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    ),
+}
+
+impl Future for CallbackFuture8 {
+    type Output = (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    );
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture8 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState8 {
+            completed: false,
+            waker: None,
+            result: (
+                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+                UNDEFINED,
+            ),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback8(Box::new(
+            move |a1: JSValue,
+                  a2: JSValue,
+                  a3: JSValue,
+                  a4: JSValue,
+                  a5: JSValue,
+                  a6: JSValue,
+                  a7: JSValue,
+                  a8: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4, a5, a6, a7, a8);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture8 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_8() -> (impl Future, JSFunction) {
+    CallbackFuture8::new()
+}
+
+struct CallbackFuture9 {
+    shared_state: Arc<Mutex<SharedState9>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState9 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    ),
+}
+
+impl Future for CallbackFuture9 {
+    type Output = (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    );
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture9 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState9 {
+            completed: false,
+            waker: None,
+            result: (
+                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+                UNDEFINED, UNDEFINED,
+            ),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback9(Box::new(
+            move |a1: JSValue,
+                  a2: JSValue,
+                  a3: JSValue,
+                  a4: JSValue,
+                  a5: JSValue,
+                  a6: JSValue,
+                  a7: JSValue,
+                  a8: JSValue,
+                  a9: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4, a5, a6, a7, a8, a9);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture9 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_9() -> (impl Future, JSFunction) {
+    CallbackFuture9::new()
+}
+
+struct CallbackFuture10 {
+    shared_state: Arc<Mutex<SharedState10>>,
+}
+
+/// Shared state between the future and the waiting thread
+struct SharedState10 {
+    completed: bool,
+    waker: Option<Waker>,
+    result: (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    ),
+}
+
+impl Future for CallbackFuture10 {
+    type Output = (
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+        JSValue,
+    );
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let mut shared_state = self.shared_state.lock();
+        if shared_state.completed {
+            Poll::Ready(shared_state.result)
+        } else {
+            shared_state.waker = Some(cx.waker().clone());
+            Poll::Pending
+        }
+    }
+}
+
+impl CallbackFuture10 {
+    fn new() -> (Self, JSFunction) {
+        let shared_state = Arc::new(Mutex::new(SharedState10 {
+            completed: false,
+            waker: None,
+            result: (
+                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+                UNDEFINED, UNDEFINED, UNDEFINED,
+            ),
+        }));
+
+        let thread_shared_state = shared_state.clone();
+        let id = create_callback(CallbackHandler::Callback10(Box::new(
+            move |a1: JSValue,
+                  a2: JSValue,
+                  a3: JSValue,
+                  a4: JSValue,
+                  a5: JSValue,
+                  a6: JSValue,
+                  a7: JSValue,
+                  a8: JSValue,
+                  a9: JSValue,
+                  a10: JSValue| {
+                let mut shared_state = thread_shared_state.lock();
+                shared_state.completed = true;
+                shared_state.result = (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+                if let Some(waker) = shared_state.waker.take() {
+                    core::mem::drop(shared_state);
+                    waker.wake()
+                }
+            },
+        )));
+        (CallbackFuture10 { shared_state }, id)
+    }
+}
+
+pub fn create_callback_future_10() -> (impl Future, JSFunction) {
+    CallbackFuture10::new()
 }
