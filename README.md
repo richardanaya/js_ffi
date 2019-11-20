@@ -32,6 +32,60 @@ pub fn main() -> () {
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
+```makefile
+# cli commands for building web assembly
+build:
+	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
+	@cp target/wasm32-unknown-unknown/release/helloworld.wasm .
+lint:
+	@cargo fmt
+serve:
+	python3 -m http.server 8080
+```
+
+
+# Drawing
+
+See demo [here](https://richardanaya.github.io/wasm-module/examples/canvas/)
+
+```html
+<script src="https://unpkg.com/@webcomponents/webcomponentsjs@latest/webcomponents-loader.js"></script>
+<script src="https://unpkg.com/wasm-module@latest/wasm-module.min.js"></script>
+<canvas id="screen" width="500" height="200"></canvas>
+<wasm-module src="drawing.wasm"></wasm-module>
+```
+```rust
+use js_ffi::*;
+
+#[no_mangle]
+fn main() {
+    let screen = js!(document.querySelector).call_1(DOCUMENT, "#screen");
+    let ctx = js!(document.querySelector).call_1(screen, "#screen");
+
+    let fill_style = js!(function(color){
+        this.fillStyle = color;
+    });
+    let fill_rect = js!(CanvasRenderingContext2D.prototype.fillRect);
+
+    fill_style.call_1(ctx, "red");
+    fill_rect.call_4(ctx, 0.0, 0.0, 50.0, 50.0);
+
+    fill_style.call_1(ctx, "green");
+    fill_rect.call_4(ctx, 15.0, 15.0, 50.0, 50.0);
+
+    fill_style.call_1(ctx, "blue");
+    fill_rect.call_4(ctx, 30.0, 30.0, 50.0, 50.0);
+}
+```
+
+# Standard Web Libraries
+
+A collection of libraries exist that expose javascript functionality so you don't have to implement it yourself. Just add them to your project and go!
+
+* [web_console](https://github.com/richardanaya/web_console)
+* [web_random](https://github.com/richardanaya/web_random)
+* [web_timer](https://github.com/richardanaya/web_timer)
+
 
 ## How it works
 
