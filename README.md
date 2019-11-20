@@ -13,7 +13,7 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] typed arrays
 - [ ] usable with nodejs
 
-This project has similaries to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
+This project has similarities to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
 
 ## Hello World!
 ```toml
