@@ -46,14 +46,8 @@ serve:
 
 # Drawing
 
-See demo [here](https://richardanaya.github.io/wasm-module/examples/canvas/)
+See demo [here](https://richardanaya.github.io/js_ffi/examples/canvas/)
 
-```html
-<script src="https://unpkg.com/@webcomponents/webcomponentsjs@latest/webcomponents-loader.js"></script>
-<script src="https://unpkg.com/wasm-module@latest/wasm-module.min.js"></script>
-<canvas id="screen" width="500" height="200"></canvas>
-<wasm-module src="drawing.wasm"></wasm-module>
-```
 ```rust
 use js_ffi::*;
 
