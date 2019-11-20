@@ -13,7 +13,7 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] typed arrays
 - [ ] usable with nodejs
 
-This project has similaries to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
+This project has similarities to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
 
 ## Hello World!
 ```toml
@@ -32,12 +32,45 @@ pub fn main() -> () {
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
+```makefile
+# cli commands for building web assembly
+build:
+	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
+	@cp target/wasm32-unknown-unknown/release/helloworld.wasm .
+lint:
+	@cargo fmt
+serve:
+	python3 -m http.server 8080
+```
 
-## How it works
 
-1. Get a handle to some Javascript function using the `js!` macro. Re-use this handle as often as possible.
-2. If you are invoking this function as a regular function, use the appropriate `invoke_*` function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
-3. If you are invoking this function as a method of an object represented by a `JSValue`, use the appropriate `call_*` function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
+# Drawing
+
+See demo [here](https://richardanaya.github.io/js_ffi/examples/canvas/)
+
+```rust
+use js_ffi::*;
+
+#[no_mangle]
+fn main() {
+    let screen = js!(document.querySelector).call_1(DOCUMENT, "#screen");
+    let ctx = js!(document.querySelector).call_1(screen, "#screen");
+
+    let fill_style = js!(function(color){
+        this.fillStyle = color;
+    });
+    let fill_rect = js!(CanvasRenderingContext2D.prototype.fillRect);
+
+    fill_style.call_1(ctx, "red");
+    fill_rect.call_4(ctx, 0.0, 0.0, 50.0, 50.0);
+
+    fill_style.call_1(ctx, "green");
+    fill_rect.call_4(ctx, 15.0, 15.0, 50.0, 50.0);
+
+    fill_style.call_1(ctx, "blue");
+    fill_rect.call_4(ctx, 30.0, 30.0, 50.0, 50.0);
+}
+```
 
 ## Event Listener
 
@@ -111,6 +144,22 @@ fn main() {
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
+
+# Standard Web Libraries
+
+A collection of libraries exist that expose javascript functionality so you don't have to implement it yourself. Just add them to your project and go!
+
+* [web_console](https://github.com/richardanaya/web_console)
+* [web_random](https://github.com/richardanaya/web_random)
+* [web_timer](https://github.com/richardanaya/web_timer)
+
+
+## How it works
+
+1. Get a handle to some Javascript function using the `js!` macro. Re-use this handle as often as possible.
+2. If you are invoking this function as a regular function, use the appropriate `invoke_*` function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
+3. If you are invoking this function as a method of an object represented by a `JSValue`, use the appropriate `call_*` function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
+
 
 # Don't like Rust?
 
