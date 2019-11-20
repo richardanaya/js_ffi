@@ -13,10 +13,12 @@ static ALLOCATOR: malloc::Allocator = malloc::Allocator;
 
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
+    throw_error("A panic occurred");
     loop {}
 }
 
 #[alloc_error_handler]
 fn oom(_: core::alloc::Layout) -> ! {
+    throw_error("Ran out of memory");
     loop {}
 }

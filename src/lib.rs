@@ -58,13 +58,23 @@ macro_rules! js {
 }
 
 pub trait ToJSValue {
-    #[inline(Always)]
     fn to_js_value(&self) -> JSValue;
-    #[inline(Always)]
     fn to_js_type(&self) -> JSType;
 }
 
 impl ToJSValue for &str {
+    #[inline]
+    fn to_js_value(&self) -> JSValue {
+        cstr(self) as JSValue
+    }
+
+    #[inline]
+    fn to_js_type(&self) -> JSType {
+        TYPE_STRING
+    }
+}
+
+impl ToJSValue for &alloc::string::String {
     #[inline]
     fn to_js_value(&self) -> JSValue {
         cstr(self) as JSValue
@@ -381,11 +391,8 @@ impl ToJSValue for &Vec<usize> {
 }
 
 pub trait JSConvert {
-    #[inline(Always)]
     fn as_string(&self) -> alloc::string::String;
-    #[inline(Always)]
     fn as_owned(&self) -> JSObject;
-    #[inline(Always)]
     fn as_bool(&self) -> bool;
     fn as_vec<Q>(&self) -> Vec<Q>
     where
@@ -1083,6 +1090,7 @@ impl JSInvoker {
 type CStrPtr = i32;
 
 extern "C" {
+    fn jsffithrowerror(err: CStrPtr);
     fn jsffirelease(obj: JSValue);
     fn jsffiregister(code: CStrPtr) -> JSValue;
     fn jsfficall0(obj: JSValue, function: JSValue) -> JSValue;
@@ -2156,4 +2164,8 @@ impl CallbackFuture10 {
 
 pub fn create_callback_future_10() -> (impl Future, JSFunction) {
     CallbackFuture10::new()
+}
+
+pub fn throw_error(err:&str){
+    unsafe { jsffithrowerror(cstr(err)); }
 }

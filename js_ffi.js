@@ -367,6 +367,14 @@ var js_ffi = {
       .then(bytes =>
         WebAssembly.instantiate(bytes, {
           env: {
+            jsffithrowerror: function(e) {
+              let err = getStringFromMemory(
+                mod.instance.exports.memory.buffer,
+                e
+              );
+              console.error(err);
+              throw new Error("Web assembly module exited unexpectedly.");
+            },
             jsffirelease: function(obj) {
               allocator_release(obj);
             },

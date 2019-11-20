@@ -1,5 +1,6 @@
 typedef double JSValue;
 extern void jsffirelease(JSValue);
+extern void jsffithrowerror(char*);
 extern int jsffiregister(char*);
 extern JSValue jsfficall0(JSValue,int);
 extern JSValue jsfficall1(JSValue,int,int,JSValue);
