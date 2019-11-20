@@ -91,22 +91,24 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    // register functions of things in global scope
-    let my_fn = js!((x) => { 
-        console.log("say something here too");
-        say_loud(x);
-    });
-    my_fn.invoke_1("hey");
+    let jquery_handle = js!($);
+    let jquery_on_handle = js!(jQuery.prototype.on);
+    let alert = js!((msg)=>window.alert(msg));
+
+    let body = jquery_handle.invoke_1("body");
+    jquery_on_handle.call_2(
+        body,
+        "click",
+        create_callback_1(move |_event| {
+            alert.invoke_1("I was clicked!");
+        }),
+    );
 }
 ```
 
 ```html
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
-<script>
-    function say_loud(msg){
-        window.alert(msg);
-    }
-</script>
 <script>js_ffi.run("example.wasm");</script>
 ```
 
