@@ -3,7 +3,7 @@ use js_ffi::*;
 #[no_mangle]
 fn main() {
     let screen = js!(document.querySelector).call_1(DOCUMENT, "#screen");
-    let ctx = js!(document.querySelector).call_1(screen, "#screen");
+    let ctx = js!(HTMLCanvasElement.prototype.getContext).call_1(screen, "2d");
 
     let fill_style = js!(function(color){
         this.fillStyle = color;
