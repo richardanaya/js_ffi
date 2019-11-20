@@ -8,4 +8,20 @@ pub fn main() -> () {
     log.invoke_1(&vec![-1i32, 1000, -1000]);
     log.invoke_1(&vec![3.14_f64, 0.0_f64, -1.0_f64]);
     log.invoke_1(&vec![1.2, 0.0, -2.333]);
+    let a = vec![1.0,2.0];
+    // send array to js and send it back immediately
+    let result = js!((data)=>data).invoke_1(&a).as_vec::<f32>();
+    log.invoke_1(result.len());
+    log.invoke_1(result[0]);
+    log.invoke_1(result[1]);
+    // make sure its same values
+    assert_eq!(a,result);
+
+
+    let b = vec![1u8,5,6];
+    // send array to js and send it back immediately
+    let result2 = js!((data)=>data).invoke_1(&b).as_vec::<u8>();
+    // make sure its same values
+    assert_eq!(b,result2);
+    log.invoke_1(result2[1]);
 }

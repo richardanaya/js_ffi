@@ -59,6 +59,18 @@ var js_ffi = {
       return start;
     }
 
+    function createTypedArray(r,t,size){
+      let start = mod.instance.exports.jsffimalloc(size*r.length+4);
+      let memory = new Uint32Array(mod.instance.exports.memory.buffer);
+      memory[start/4] = r.length;
+      let data_start = (start+4)/size;
+      memory = new t(mod.instance.exports.memory.buffer);
+      for(let i=0;i<r.length;i++){
+        memory[data_start+i] = r[i];
+      }
+      return start;
+    }
+
     function getStringFromMemory(mem, start) {
       const data = new Uint8Array(mem);
       const str = [];
@@ -72,9 +84,9 @@ var js_ffi = {
 
     function getTypedArrayFromMemory(t, mem, start, size) {
       const data32 = new Uint32Array(mem);
-      const data = new t(mem);
-      const length = data32[start / 4];
-      const offset = data32[start / 4 + 1];
+      const ptr = data32[start / 4];
+      const offset = data32[ptr / 4];
+      const length = data32[ptr / 4 + 1];
       let b = mem.slice(offset, offset + length * size);
       let a = new t(b);
       return a;
@@ -306,27 +318,6 @@ var js_ffi = {
           val,
           2
         );
-      } else if (val_type == TYPE_BI64_ARRAY) {
-        val = getTypedArrayFromMemory(
-          BigInt64Array,
-          mod.instance.exports.memory.buffer,
-          val,
-          8
-        );
-      } else if (val_type === TYPE_BUI64_ARRAY) {
-        val = getTypedArrayFromMemory(
-          BigUint64Array,
-          mod.instance.exports.memory.buffer,
-          val,
-          8
-        );
-      } else if (val_type === TYPE_UINT8CLAMPED_ARRAY) {
-        val = getTypedArrayFromMemory(
-          Uint8ClampedArray,
-          mod.instance.exports.memory.buffer,
-          val,
-          1
-        );
       } else if (val_type === TYPE_MEMORY) {
         val = mod.instance.exports.memory.buffer;
       }else {
@@ -349,6 +340,22 @@ var js_ffi = {
         return 1;
       } else if (r === false) {
         return 0;
+      } else if (r.constructor === Float32Array) {
+        return createTypedArray(r,Float32Array,4)
+      } else if (r.constructor === Uint8Array) {
+        return createTypedArray(r,Uint8Array,1)
+      } else if (r.constructor === Int8Array) {
+        return createTypedArray(r,Int8Array,1)
+      } else if (r.constructor === Float64Array) {
+        return createTypedArray(r,Float64Array,8)
+      } else if (r.constructor === Int32Array) {
+        return createTypedArray(r,Int32Array,4)
+      } else if (r.constructor === Uint32Array) {
+        return createTypedArray(r,Uint32Array,4)
+      } else if (r.constructor === Int16Array) {
+        return createTypedArray(r,Int16Array,2)
+      } else if (r.constructor === Uint16Array) {
+        return createTypedArray(r,Uint16Array,2)
       }
       return allocate(r);
     }

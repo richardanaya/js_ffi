@@ -380,7 +380,7 @@ impl ToJSValue for &Vec<usize> {
     }
 }
 
-trait JSConvert {
+pub trait JSConvert {
     #[inline(Always)]
     fn as_string(&self) -> alloc::string::String;
     #[inline(Always)]
