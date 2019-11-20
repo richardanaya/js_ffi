@@ -74,11 +74,11 @@ pub fn main() -> () {
     });
 }
 
-fn sleep(millis:u32) {
+fn sleep(millis: u32) -> impl core::future::Future {
     let set_timeout = js!(window.setTimeout);
     let (future, cb) = create_callback_future_0();
-    set_timeout.invoke_2(cb,1000);
-    future.await;
+    set_timeout.invoke_2(cb, millis);
+    future
 }
 ```
 
