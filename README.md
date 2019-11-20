@@ -72,21 +72,6 @@ fn main() {
 }
 ```
 
-# Standard Web Libraries
-
-A collection of libraries exist that expose javascript functionality so you don't have to implement it yourself. Just add them to your project and go!
-
-* [web_console](https://github.com/richardanaya/web_console)
-* [web_random](https://github.com/richardanaya/web_random)
-* [web_timer](https://github.com/richardanaya/web_timer)
-
-
-## How it works
-
-1. Get a handle to some Javascript function using the `js!` macro. Re-use this handle as often as possible.
-2. If you are invoking this function as a regular function, use the appropriate `invoke_*` function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
-3. If you are invoking this function as a method of an object represented by a `JSValue`, use the appropriate `call_*` function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
-
 ## Event Listener
 
 ```rust
@@ -159,6 +144,22 @@ fn main() {
 <script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
+
+# Standard Web Libraries
+
+A collection of libraries exist that expose javascript functionality so you don't have to implement it yourself. Just add them to your project and go!
+
+* [web_console](https://github.com/richardanaya/web_console)
+* [web_random](https://github.com/richardanaya/web_random)
+* [web_timer](https://github.com/richardanaya/web_timer)
+
+
+## How it works
+
+1. Get a handle to some Javascript function using the `js!` macro. Re-use this handle as often as possible.
+2. If you are invoking this function as a regular function, use the appropriate `invoke_*` function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
+3. If you are invoking this function as a method of an object represented by a `JSValue`, use the appropriate `call_*` function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
+
 
 # Don't like Rust?
 
