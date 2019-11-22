@@ -2166,6 +2166,36 @@ pub fn create_callback_future_10() -> (impl Future, JSFunction) {
     CallbackFuture10::new()
 }
 
-pub fn throw_error(err:&str){
-    unsafe { jsffithrowerror(cstr(err)); }
+pub fn throw_error(err: &str) {
+    unsafe {
+        jsffithrowerror(cstr(err));
+    }
+}
+
+pub fn get_property(o: impl ToJSValue, prop: &str) -> JSValue {
+    unsafe {
+        jsfficall2(
+            UNDEFINED,
+            0.0,
+            o.to_js_type(),
+            o.to_js_value(),
+            TYPE_STRING,
+            cstr(prop) as JSValue,
+        )
+    }
+}
+
+pub fn set_property(o: impl ToJSValue, prop: &str, v: impl ToJSValue) {
+    unsafe {
+        jsfficall3(
+            UNDEFINED,
+            1.0,
+            o.to_js_type(),
+            o.to_js_value(),
+            TYPE_STRING,
+            cstr(prop) as JSValue,
+            v.to_js_type(),
+            v.to_js_value(),
+        );
+    }
 }

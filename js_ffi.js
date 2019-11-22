@@ -25,7 +25,16 @@ var js_ffi = {
       return ret;
     }
 
-    let functions = [];
+    let functions = [
+      // get property
+      (o,p) => {
+        return o[p];
+      },
+      // set property
+      (o,p,v) => {
+        o[p] = v;
+      }
+    ];
     let mod = null;
 
     const TYPE_NOTHING = 0;
