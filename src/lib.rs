@@ -1396,9 +1396,9 @@ fn get_callback(id: CallbackHandle) -> Option<Arc<Mutex<CallbackHandler>>> {
     }
 }
 
-pub fn remove_callback(id: CallbackHandle) {
+pub fn remove_callback(cb: JSFunction) {
     let mut cbs = get_callbacks().lock();
-    let index = cbs.keys.iter().position(|&r| r == id);
+    let index = cbs.keys.iter().position(|&r| r == cb.0 as u32);
     if let Some(i) = index {
         cbs.keys.remove(i);
         cbs.handlers.remove(i);
