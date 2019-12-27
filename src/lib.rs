@@ -394,6 +394,8 @@ pub trait JSConvert {
     fn as_string(&self) -> alloc::string::String;
     fn as_owned(&self) -> JSObject;
     fn as_bool(&self) -> bool;
+    fn is_null(&self) -> bool;
+    fn is_undefined(&self) -> bool;
     fn as_vec<Q>(&self) -> Vec<Q>
     where
         Q: Copy;
@@ -413,6 +415,16 @@ impl JSConvert for JSValue {
     #[inline]
     fn as_bool(&self) -> bool {
         *self == TRUE
+    }
+
+    #[inline]
+    fn is_null(&self) -> bool {
+        *self == NULL
+    }
+
+    #[inline]
+    fn is_undefined(&self) -> bool {
+        *self == UNDEFINED
     }
 
     fn as_vec<Q>(&self) -> Vec<Q>
