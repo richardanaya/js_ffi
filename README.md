@@ -11,7 +11,6 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] works with web assembly languages other than Rust
 - [x] a `js!` macro for inline javascript
 - [x] typed arrays
-- [ ] usable with nodejs
 
 This project has similarities to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
 
@@ -29,7 +28,7 @@ pub fn main() -> () {
 }
 ```
 ```html
-<script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/richardanaya/js_ffi@latest/js_ffi.js"></script>
 <script>js_ffi.run("example.wasm");</script>
 ```
 ```makefile
