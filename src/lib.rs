@@ -11,7 +11,7 @@ extern crate alloc;
 #[macro_use]
 extern crate lazy_static;
 use alloc::vec::Vec;
-pub use anystring::anystring;
+pub use highlight::{js,anystring};
 use cstring::{cstr, cstr_to_string};
 
 pub type JSValue = f64;
@@ -48,14 +48,6 @@ pub const DOCUMENT: JSValue = 4.0;
 #[derive(Clone, Copy)]
 pub struct JSInvoker(JSValue);
 
-#[macro_export]
-macro_rules! js {
-    ($($x:tt)*) => {
-        {
-        register_function(anystring!($($x)*))
-        }
-    };
-}
 
 pub trait ToJSValue {
     fn to_js_value(&self) -> JSValue;

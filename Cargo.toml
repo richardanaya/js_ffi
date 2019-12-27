@@ -1,6 +1,6 @@
 [package]
 name = "js_ffi"
-version = "0.6.5"
+version = "0.6.6"
 authors = ["Richard Anaya"]
 edition = "2018"
 description = "A FFI library for calling javascript"
@@ -13,7 +13,7 @@ readme="README.md"
 
 [dependencies]
 cstring = "0.0"
-anystring = "0.0"
+highlight = "0"
 spin = "0.5"
 
 [dependencies.lazy_static]
