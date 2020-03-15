@@ -10,7 +10,7 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] support for callbacks (e.g. `setTimeout`)
 - [x] futures based on callbacks
 - [x] memory as a parameter
-- [x] works with web assembly languages other than Rust
+- [x] wrapper library for Rust
 - [x] works with C or C++, [check out examples here](https://github.com/richardanaya/js_ffi/tree/master/examples_in_c)
 - [x] a `js!` macro for inline javascript
 - [x] typed arrays
