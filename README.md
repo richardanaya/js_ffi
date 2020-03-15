@@ -17,7 +17,10 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 
 This project has similarities to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
 
-## Hello World!
+## Hello World! in Rust
+
+**note js_ffi is language agnostic, I just used Rust as example because I like it**
+
 ```toml
 [dependencies]
 js_ffi = "0.6"
