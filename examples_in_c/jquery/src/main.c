@@ -1,5 +1,3 @@
- 
-#define export __attribute__((visibility("default")))
 #include "../../js_ffi.h"
 
 export int main() {

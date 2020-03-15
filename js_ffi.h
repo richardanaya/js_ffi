@@ -1,3 +1,8 @@
+#ifndef export
+#define export __attribute__((visibility("default")))
+#endif
+
+#ifndef JS_FFI_H
 typedef double JSValue;
 extern void jsffirelease(JSValue);
 extern void jsffithrowerror(char*);
@@ -40,3 +45,4 @@ int const TYPE_F64_ARRAY = 14;
 int const TYPE_BI64_ARRAY = 15;
 int const TYPE_BUI64_ARRAY = 16;
 int const TYPE_MEMORY = 17;
+#endif
