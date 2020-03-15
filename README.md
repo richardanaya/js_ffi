@@ -1,8 +1,10 @@
 # js_ffi
 
+**this library creates a bridge to javascript in the browser at runtime using web assembly**
+
 <a href="https://docs.rs/js_ffi"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
 
-A foreign function interface(FFI) library for invoking Javascript functions from Web Assembly with Rust
+A foreign function interface(FFI) library for invoking Javascript functions from Web Assembly for many programming languages
 
 - [x] no code generation or special cargo components
 - [x] support for callbacks (e.g. `setTimeout`)
