@@ -43,6 +43,7 @@ pub const UNDEFINED: JSValue = 0.0;
 pub const NULL: JSValue = 1.0;
 pub const CONSOLE: JSValue = 2.0;
 pub const WINDOW: JSValue = 3.0;
+pub const SELF: JSValue = 3.0;
 pub const DOCUMENT: JSValue = 4.0;
 
 #[derive(Clone, Copy)]
