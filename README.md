@@ -177,6 +177,22 @@ The script `js_ffi.js` has nothing Rust specific.
 * If you plan on having your module receive callbacks it must implement `jsfficallback(i32,f32,f32,f32,f32,f32,f32,f32,f32,f32,f32)`
 * strings are simply c-strings in memory that end in a `0` character.
 
+# Run as a webworker
+
+```js
+// main.js
+let w = new Worker("worker.js");
+w.postMessage("go");
+```
+
+```js
+// worker.js
+importScripts("https://cdn.jsdelivr.net/gh/richardanaya/js_ffi/js_ffi.js")
+onmessage = function() {
+    js_ffi.run("helloworld.wasm");
+}
+```
+
 # License
 
 This project is licensed under either of
