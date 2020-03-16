@@ -12,6 +12,7 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] works with C or C++, check out examples here
 - [x] a `js!` macro for inline javascript
 - [x] typed arrays
+- [x] can be executed in a web worker
 
 This project has similarities to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
 

@@ -1,7 +1,13 @@
 var js_ffi = {
   run: function(cfg) {
     //allocator
-    let allocations = [undefined, null, console, window, document];
+    let allocations = [
+      undefined,
+      null,
+      console,
+      self,
+      typeof document != "undefined" ? document : null
+    ];
     let empty = [];
     function allocate(value) {
       const i = empty.length > 0 ? empty.pop() : allocations.length;
@@ -27,11 +33,11 @@ var js_ffi = {
 
     let functions = [
       // get property
-      (o,p) => {
+      (o, p) => {
         return o[p];
       },
       // set property
-      (o,p,v) => {
+      (o, p, v) => {
         o[p] = v;
       }
     ];
@@ -68,14 +74,14 @@ var js_ffi = {
       return start;
     }
 
-    function createTypedArray(r,t,size){
-      let start = mod.instance.exports.jsffimalloc(size*r.length+4);
+    function createTypedArray(r, t, size) {
+      let start = mod.instance.exports.jsffimalloc(size * r.length + 4);
       let memory = new Uint32Array(mod.instance.exports.memory.buffer);
-      memory[start/4] = r.length;
-      let data_start = (start+4)/size;
+      memory[start / 4] = r.length;
+      let data_start = (start + 4) / size;
       memory = new t(mod.instance.exports.memory.buffer);
-      for(let i=0;i<r.length;i++){
-        memory[data_start+i] = r[i];
+      for (let i = 0; i < r.length; i++) {
+        memory[data_start + i] = r[i];
       }
       return start;
     }
@@ -329,7 +335,7 @@ var js_ffi = {
         );
       } else if (val_type === TYPE_MEMORY) {
         val = mod.instance.exports.memory.buffer;
-      }else {
+      } else {
         throw error("Unknown data type");
       }
       return val;
@@ -350,316 +356,327 @@ var js_ffi = {
       } else if (r === false) {
         return 0;
       } else if (r.constructor === Float32Array) {
-        return createTypedArray(r,Float32Array,4)
+        return createTypedArray(r, Float32Array, 4);
       } else if (r.constructor === Uint8Array) {
-        return createTypedArray(r,Uint8Array,1)
+        return createTypedArray(r, Uint8Array, 1);
       } else if (r.constructor === Int8Array) {
-        return createTypedArray(r,Int8Array,1)
+        return createTypedArray(r, Int8Array, 1);
       } else if (r.constructor === Float64Array) {
-        return createTypedArray(r,Float64Array,8)
+        return createTypedArray(r, Float64Array, 8);
       } else if (r.constructor === Int32Array) {
-        return createTypedArray(r,Int32Array,4)
+        return createTypedArray(r, Int32Array, 4);
       } else if (r.constructor === Uint32Array) {
-        return createTypedArray(r,Uint32Array,4)
+        return createTypedArray(r, Uint32Array, 4);
       } else if (r.constructor === Int16Array) {
-        return createTypedArray(r,Int16Array,2)
+        return createTypedArray(r, Int16Array, 2);
       } else if (r.constructor === Uint16Array) {
-        return createTypedArray(r,Uint16Array,2)
+        return createTypedArray(r, Uint16Array, 2);
       }
       return allocate(r);
     }
     if (typeof cfg === "string") {
       cfg = { path: cfg };
     }
+    let result = {};
     fetch(cfg.path)
       .then(response => response.arrayBuffer())
       .then(bytes =>
-        WebAssembly.instantiate(bytes, {
-          env: {
-            jsffithrowerror: function(e) {
-              let err = getStringFromMemory(
-                mod.instance.exports.memory.buffer,
-                e
-              );
-              console.error(err);
-              throw new Error("Web assembly module exited unexpectedly.");
-            },
-            jsffirelease: function(obj) {
-              allocator_release(obj);
-            },
-            jsffiregister: function(code) {
-              code = getStringFromMemory(
-                mod.instance.exports.memory.buffer,
-                code
-              );
-              let id = functions.length;
-              functions.push(eval("("+code+")"));
-              return id;
-            },
-            jsfficall0: function(obj, f) {
-              return convertResponse(functions[f].call(allocator_get(obj)));
-            },
-            jsfficall1: function(obj, f, a1_type, a1) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1)
-                )
-              );
-            },
-            jsfficall2: function(obj, f, a1_type, a1, a2_type, a2) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2)
-                )
-              );
-            },
-            jsfficall3: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3)
-                )
-              );
-            },
-            jsfficall4: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4)
-                )
-              );
-            },
-            jsfficall5: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4,
-              a5_type,
-              a5
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4),
-                  convertArgument(a5_type, a5)
-                )
-              );
-            },
-            jsfficall6: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4,
-              a5_type,
-              a5,
-              a6_type,
-              a6
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4),
-                  convertArgument(a5_type, a5),
-                  convertArgument(a6_type, a6)
-                )
-              );
-            },
-            jsfficall7: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4,
-              a5_type,
-              a5,
-              a6_type,
-              a6,
-              a7_type,
-              a7
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4),
-                  convertArgument(a5_type, a5),
-                  convertArgument(a6_type, a6),
-                  convertArgument(a7_type, a7)
-                )
-              );
-            },
-            jsfficall8: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4,
-              a5_type,
-              a5,
-              a6_type,
-              a6,
-              a7_type,
-              a7,
-              a8_type,
-              a8
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4),
-                  convertArgument(a5_type, a5),
-                  convertArgument(a6_type, a6),
-                  convertArgument(a7_type, a7),
-                  convertArgument(a8_type, a8)
-                )
-              );
-            },
-            jsfficall9: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4,
-              a5_type,
-              a5,
-              a6_type,
-              a6,
-              a7_type,
-              a7,
-              a8_type,
-              a8,
-              a9_type,
-              a9
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4),
-                  convertArgument(a5_type, a5),
-                  convertArgument(a6_type, a6),
-                  convertArgument(a7_type, a7),
-                  convertArgument(a8_type, a8),
-                  convertArgument(a9_type, a9)
-                )
-              );
-            },
-            jsfficall10: function(
-              obj,
-              f,
-              a1_type,
-              a1,
-              a2_type,
-              a2,
-              a3_type,
-              a3,
-              a4_type,
-              a4,
-              a5_type,
-              a5,
-              a6_type,
-              a6,
-              a7_type,
-              a7,
-              a8_type,
-              a8,
-              a9_type,
-              a9,
-              a10_type,
-              a10
-            ) {
-              return convertResponse(
-                functions[f].call(
-                  allocator_get(obj),
-                  convertArgument(a1_type, a1),
-                  convertArgument(a2_type, a2),
-                  convertArgument(a3_type, a3),
-                  convertArgument(a4_type, a4),
-                  convertArgument(a5_type, a5),
-                  convertArgument(a6_type, a6),
-                  convertArgument(a7_type, a7),
-                  convertArgument(a8_type, a8),
-                  convertArgument(a9_type, a9),
-                  convertArgument(a10_type, a10)
-                )
-              );
-            }
+        WebAssembly.instantiate(
+          bytes,
+          cfg.overrides || {
+            env: Object.assign(
+              {
+                jsffithrowerror: function(e) {
+                  let err = getStringFromMemory(
+                    mod.instance.exports.memory.buffer,
+                    e
+                  );
+                  console.error(err);
+                  throw new Error("Web assembly module exited unexpectedly.");
+                },
+                jsffirelease: function(obj) {
+                  allocator_release(obj);
+                },
+                jsffiregister: function(code) {
+                  code = getStringFromMemory(
+                    mod.instance.exports.memory.buffer,
+                    code
+                  );
+                  let id = functions.length;
+                  functions.push(eval("(" + code + ")"));
+                  return id;
+                },
+                jsfficall0: function(obj, f) {
+                  return convertResponse(functions[f].call(allocator_get(obj)));
+                },
+                jsfficall1: function(obj, f, a1_type, a1) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1)
+                    )
+                  );
+                },
+                jsfficall2: function(obj, f, a1_type, a1, a2_type, a2) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2)
+                    )
+                  );
+                },
+                jsfficall3: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3)
+                    )
+                  );
+                },
+                jsfficall4: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4)
+                    )
+                  );
+                },
+                jsfficall5: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4,
+                  a5_type,
+                  a5
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4),
+                      convertArgument(a5_type, a5)
+                    )
+                  );
+                },
+                jsfficall6: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4,
+                  a5_type,
+                  a5,
+                  a6_type,
+                  a6
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4),
+                      convertArgument(a5_type, a5),
+                      convertArgument(a6_type, a6)
+                    )
+                  );
+                },
+                jsfficall7: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4,
+                  a5_type,
+                  a5,
+                  a6_type,
+                  a6,
+                  a7_type,
+                  a7
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4),
+                      convertArgument(a5_type, a5),
+                      convertArgument(a6_type, a6),
+                      convertArgument(a7_type, a7)
+                    )
+                  );
+                },
+                jsfficall8: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4,
+                  a5_type,
+                  a5,
+                  a6_type,
+                  a6,
+                  a7_type,
+                  a7,
+                  a8_type,
+                  a8
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4),
+                      convertArgument(a5_type, a5),
+                      convertArgument(a6_type, a6),
+                      convertArgument(a7_type, a7),
+                      convertArgument(a8_type, a8)
+                    )
+                  );
+                },
+                jsfficall9: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4,
+                  a5_type,
+                  a5,
+                  a6_type,
+                  a6,
+                  a7_type,
+                  a7,
+                  a8_type,
+                  a8,
+                  a9_type,
+                  a9
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4),
+                      convertArgument(a5_type, a5),
+                      convertArgument(a6_type, a6),
+                      convertArgument(a7_type, a7),
+                      convertArgument(a8_type, a8),
+                      convertArgument(a9_type, a9)
+                    )
+                  );
+                },
+                jsfficall10: function(
+                  obj,
+                  f,
+                  a1_type,
+                  a1,
+                  a2_type,
+                  a2,
+                  a3_type,
+                  a3,
+                  a4_type,
+                  a4,
+                  a5_type,
+                  a5,
+                  a6_type,
+                  a6,
+                  a7_type,
+                  a7,
+                  a8_type,
+                  a8,
+                  a9_type,
+                  a9,
+                  a10_type,
+                  a10
+                ) {
+                  return convertResponse(
+                    functions[f].call(
+                      allocator_get(obj),
+                      convertArgument(a1_type, a1),
+                      convertArgument(a2_type, a2),
+                      convertArgument(a3_type, a3),
+                      convertArgument(a4_type, a4),
+                      convertArgument(a5_type, a5),
+                      convertArgument(a6_type, a6),
+                      convertArgument(a7_type, a7),
+                      convertArgument(a8_type, a8),
+                      convertArgument(a9_type, a9),
+                      convertArgument(a10_type, a10)
+                    )
+                  );
+                }
+              },
+              cfg.imports || {}
+            )
           }
-        }).then(module => {
+        ).then(module => {
           mod = module;
+          result.instance = module.instance;
           if (cfg.onLoad) {
             cfg.onLoad(module);
           }
-          module.instance.exports.main();
+          if (cfg.entry !== null) {
+            module.instance.exports[cfg.entry || "main"]();
+          }
         })
       );
+    return result;
   }
 };
