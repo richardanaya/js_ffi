@@ -1,22 +1,27 @@
 # js_ffi
 
+**this library creates a bridge to javascript in the browser at runtime using web assembly**
+
 <a href="https://docs.rs/js_ffi"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
 
-A foreign function interface(FFI) library for invoking Javascript functions from Web Assembly with Rust
+A foreign function interface(FFI) library for invoking Javascript functions from Web Assembly for many programming languages
 
 - [x] no code generation or special cargo components
 - [x] support for callbacks (e.g. `setTimeout`)
 - [x] futures based on callbacks
 - [x] memory as a parameter
-- [x] works with web assembly languages other than Rust
-- [x] works with C or C++, check out examples here
+- [x] wrapper library for Rust
+- [x] works with C or C++, [check out examples here](https://github.com/richardanaya/js_ffi/tree/master/examples_in_c)
 - [x] a `js!` macro for inline javascript
 - [x] typed arrays
 - [x] can be executed in a web worker
 
 This project has similarities to Javascript's `<function>.call(<object>,a0,a1,...)` but with the limitations of Web Assembly's function call restrictions.
 
-## Hello World!
+## Hello World! in Rust
+
+**note js_ffi is language agnostic, I just used Rust as example because I like it**
+
 ```toml
 [dependencies]
 js_ffi = "0.6"
