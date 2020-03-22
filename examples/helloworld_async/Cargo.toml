@@ -7,8 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-executor = "0.2"
+executor = "0"
 js_ffi = {path="../../"}
+wee_alloc = "0"
 
 [lib]
 crate-type =["cdylib"]

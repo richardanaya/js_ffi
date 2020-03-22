@@ -8,8 +8,10 @@ pub fn main() -> () {
     js!(console.log).invoke_1("Hello World");
 }
 
+extern crate wee_alloc;
+
 #[global_allocator]
-static ALLOCATOR: malloc::Allocator = malloc::Allocator;
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {

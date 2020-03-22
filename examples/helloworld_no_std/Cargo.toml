@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 js_ffi = {path="../../"}
-malloc = "0.0.1"
+wee_alloc = "0"
 
 [lib]
 crate-type =["cdylib"]
