@@ -10,7 +10,7 @@ pub fn main() -> () {
     log.invoke_1(&vec![1.2, 0.0, -2.333]);
     let a = vec![1.0,2.0];
     // send array to js and send it back immediately
-    let result = js!((data)=>data).invoke_1(&a).as_vec::<f32>();
+    let result = js!((data)=>data).invoke_1(&a).to_vec::<f32>();
     log.invoke_1(result.len());
     log.invoke_1(result[0]);
     log.invoke_1(result[1]);
@@ -20,7 +20,7 @@ pub fn main() -> () {
 
     let b = vec![1u8,5,6];
     // send array to js and send it back immediately
-    let result2 = js!((data)=>data).invoke_1(&b).as_vec::<u8>();
+    let result2 = js!((data)=>data).invoke_1(&b).to_vec::<u8>();
     // make sure its same values
     assert_eq!(b,result2);
     log.invoke_1(result2[1]);

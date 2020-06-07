@@ -39,12 +39,12 @@ pub const TYPE_F64_ARRAY: JSType = 14;
 //pub const TYPE_BUI64_ARRAY: JSType = 16;
 pub const TYPE_MEMORY: JSType = 17;
 
-pub const UNDEFINED: JSValue = 0.0;
-pub const NULL: JSValue = 1.0;
-pub const CONSOLE: JSValue = 2.0;
-pub const WINDOW: JSValue = 3.0;
-pub const SELF: JSValue = 3.0;
-pub const DOCUMENT: JSValue = 4.0;
+pub const UNDEFINED: JSObject = JSObject(0.0);
+pub const NULL: JSObject = JSObject(1.0);
+pub const CONSOLE: JSObject = JSObject(2.0);
+pub const WINDOW: JSObject = JSObject(3.0);
+pub const SELF: JSObject = JSObject(3.0);
+pub const DOCUMENT: JSObject = JSObject(4.0);
 
 #[derive(Clone, Copy)]
 pub struct JSInvoker(JSValue);
@@ -215,7 +215,7 @@ pub struct JSObject(pub JSValue);
 
 impl Drop for JSObject {
     fn drop(&mut self) {
-        release_object(self.0)
+        release_object(self)
     }
 }
 
@@ -392,43 +392,43 @@ impl ToJSValue for &Vec<usize> {
 }
 
 pub trait JSConvert {
-    fn as_string(&self) -> alloc::string::String;
-    fn as_owned(&self) -> JSObject;
-    fn as_bool(&self) -> bool;
+    fn to_string(&self) -> alloc::string::String;
+    fn to_js_object(&self) -> JSObject;
+    fn to_bool(&self) -> bool;
     fn is_null(&self) -> bool;
     fn is_undefined(&self) -> bool;
-    fn as_vec<Q>(&self) -> Vec<Q>
+    fn to_vec<Q>(&self) -> Vec<Q>
     where
         Q: Copy;
 }
 
 impl JSConvert for JSValue {
     #[inline]
-    fn as_string(&self) -> alloc::string::String {
+    fn to_string(&self) -> alloc::string::String {
         cstr_to_string(*self as i32)
     }
 
     #[inline]
-    fn as_owned(&self) -> JSObject {
+    fn to_js_object(&self) -> JSObject {
         JSObject(*self)
     }
 
     #[inline]
-    fn as_bool(&self) -> bool {
+    fn to_bool(&self) -> bool {
         *self == TRUE
     }
 
     #[inline]
     fn is_null(&self) -> bool {
-        *self == NULL
+        *self == NULL.0
     }
 
     #[inline]
     fn is_undefined(&self) -> bool {
-        *self == UNDEFINED
+        *self == UNDEFINED.0
     }
 
-    fn as_vec<Q>(&self) -> Vec<Q>
+    fn to_vec<Q>(&self) -> Vec<Q>
     where
         Q: Copy,
     {
@@ -450,17 +450,17 @@ impl JSConvert for JSValue {
 
 impl JSInvoker {
     #[inline]
-    pub fn call_0(&self, obj: impl ToJSValue) -> JSValue {
+    pub fn call_0(&self, obj: &JSObject) -> JSValue {
         unsafe { jsfficall0(obj.to_js_value(), self.0) }
     }
 
     #[inline]
-    pub fn call_1(&self, obj: impl ToJSValue, a1: impl ToJSValue) -> JSValue {
+    pub fn call_1(&self, obj: &JSObject, a1: impl ToJSValue) -> JSValue {
         unsafe { jsfficall1(obj.to_js_value(), self.0, a1.to_js_type(), a1.to_js_value()) }
     }
 
     #[inline]
-    pub fn call_2(&self, obj: impl ToJSValue, a1: impl ToJSValue, a2: impl ToJSValue) -> JSValue {
+    pub fn call_2(&self, obj: &JSObject, a1: impl ToJSValue, a2: impl ToJSValue) -> JSValue {
         unsafe {
             jsfficall2(
                 obj.to_js_value(),
@@ -476,7 +476,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_3(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
         a1: impl ToJSValue,
         a2: impl ToJSValue,
         a3: impl ToJSValue,
@@ -498,7 +498,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_4(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
         a1: impl ToJSValue,
         a2: impl ToJSValue,
         a3: impl ToJSValue,
@@ -524,7 +524,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_5(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
 
         a1: impl ToJSValue,
 
@@ -557,7 +557,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_6(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
 
         a1: impl ToJSValue,
 
@@ -594,7 +594,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_7(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
 
         a1: impl ToJSValue,
 
@@ -635,7 +635,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_8(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
 
         a1: impl ToJSValue,
 
@@ -680,7 +680,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_9(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
 
         a1: impl ToJSValue,
 
@@ -729,7 +729,7 @@ impl JSInvoker {
     #[inline]
     pub fn call_10(
         &self,
-        obj: impl ToJSValue,
+        obj: &JSObject,
 
         a1: impl ToJSValue,
 
@@ -781,19 +781,19 @@ impl JSInvoker {
 
     #[inline]
     pub fn invoke_0(&self) -> JSValue {
-        unsafe { jsfficall0(UNDEFINED, self.0) }
+        unsafe { jsfficall0(UNDEFINED.0, self.0) }
     }
 
     #[inline]
     pub fn invoke_1(&self, a1: impl ToJSValue) -> JSValue {
-        unsafe { jsfficall1(UNDEFINED, self.0, a1.to_js_type(), a1.to_js_value()) }
+        unsafe { jsfficall1(UNDEFINED.0, self.0, a1.to_js_type(), a1.to_js_value()) }
     }
 
     #[inline]
     pub fn invoke_2(&self, a1: impl ToJSValue, a2: impl ToJSValue) -> JSValue {
         unsafe {
             jsfficall2(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -807,7 +807,7 @@ impl JSInvoker {
     pub fn invoke_3(&self, a1: impl ToJSValue, a2: impl ToJSValue, a3: impl ToJSValue) -> JSValue {
         unsafe {
             jsfficall3(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -833,7 +833,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall4(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -863,7 +863,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall5(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -897,7 +897,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall6(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -935,7 +935,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall7(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -977,7 +977,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall8(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -1023,7 +1023,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall9(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -1073,7 +1073,7 @@ impl JSInvoker {
     ) -> JSValue {
         unsafe {
             jsfficall10(
-                UNDEFINED,
+                UNDEFINED.0,
                 self.0,
                 a1.to_js_type(),
                 a1.to_js_value(),
@@ -1254,8 +1254,8 @@ extern "C" {
     ) -> JSValue;
 }
 
-pub fn release_object(obj: JSValue) {
-    unsafe { jsffirelease(obj) }
+pub fn release_object(obj: &JSObject) {
+    unsafe { jsffirelease(obj.0) }
 }
 
 pub fn register_function(code: &str) -> JSInvoker {
@@ -1571,7 +1571,7 @@ impl CallbackFuture1 {
         let shared_state = Arc::new(Mutex::new(SharedState1 {
             completed: false,
             waker: None,
-            result: UNDEFINED,
+            result: UNDEFINED.0,
         }));
 
         let thread_shared_state = shared_state.clone();
@@ -1621,7 +1621,7 @@ impl CallbackFuture2 {
         let shared_state = Arc::new(Mutex::new(SharedState2 {
             completed: false,
             waker: None,
-            result: (UNDEFINED, UNDEFINED),
+            result: (UNDEFINED.0, UNDEFINED.0),
         }));
 
         let thread_shared_state = shared_state.clone();
@@ -1673,7 +1673,7 @@ impl CallbackFuture3 {
         let shared_state = Arc::new(Mutex::new(SharedState3 {
             completed: false,
             waker: None,
-            result: (UNDEFINED, UNDEFINED, UNDEFINED),
+            result: (UNDEFINED.0, UNDEFINED.0, UNDEFINED.0),
         }));
 
         let thread_shared_state = shared_state.clone();
@@ -1725,7 +1725,7 @@ impl CallbackFuture4 {
         let shared_state = Arc::new(Mutex::new(SharedState4 {
             completed: false,
             waker: None,
-            result: (UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED),
+            result: (UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0),
         }));
 
         let thread_shared_state = shared_state.clone();
@@ -1777,7 +1777,7 @@ impl CallbackFuture5 {
         let shared_state = Arc::new(Mutex::new(SharedState5 {
             completed: false,
             waker: None,
-            result: (UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED),
+            result: (UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0),
         }));
 
         let thread_shared_state = shared_state.clone();
@@ -1830,7 +1830,7 @@ impl CallbackFuture6 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
             ),
         }));
 
@@ -1900,7 +1900,7 @@ impl CallbackFuture7 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
+                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
             ),
         }));
 
@@ -1978,8 +1978,8 @@ impl CallbackFuture8 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
-                UNDEFINED,
+                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0,
             ),
         }));
 
@@ -2060,8 +2060,8 @@ impl CallbackFuture9 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
-                UNDEFINED, UNDEFINED,
+                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0, UNDEFINED.0,
             ),
         }));
 
@@ -2145,8 +2145,8 @@ impl CallbackFuture10 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED,
-                UNDEFINED, UNDEFINED, UNDEFINED,
+                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
             ),
         }));
 
@@ -2188,7 +2188,7 @@ pub fn throw_error(err: &str) {
 pub fn get_property(o: impl ToJSValue, prop: &str) -> JSValue {
     unsafe {
         jsfficall2(
-            UNDEFINED,
+            UNDEFINED.0,
             0.0,
             o.to_js_type(),
             o.to_js_value(),
@@ -2201,7 +2201,7 @@ pub fn get_property(o: impl ToJSValue, prop: &str) -> JSValue {
 pub fn set_property(o: impl ToJSValue, prop: &str, v: impl ToJSValue) {
     unsafe {
         jsfficall3(
-            UNDEFINED,
+            UNDEFINED.0,
             1.0,
             o.to_js_type(),
             o.to_js_value(),
