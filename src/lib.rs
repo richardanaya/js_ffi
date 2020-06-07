@@ -1767,7 +1767,13 @@ impl CallbackFuture5 {
         let shared_state = Arc::new(Mutex::new(SharedState5 {
             completed: false,
             waker: None,
-            result: (UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0),
+            result: (
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+            ),
         }));
 
         let thread_shared_state = shared_state.clone();
@@ -1820,7 +1826,12 @@ impl CallbackFuture6 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
             ),
         }));
 
@@ -1890,7 +1901,13 @@ impl CallbackFuture7 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
             ),
         }));
 
@@ -1968,7 +1985,13 @@ impl CallbackFuture8 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
                 UNDEFINED.0,
             ),
         }));
@@ -2050,8 +2073,15 @@ impl CallbackFuture9 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
-                UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
             ),
         }));
 
@@ -2135,8 +2165,16 @@ impl CallbackFuture10 {
             completed: false,
             waker: None,
             result: (
-                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
-                UNDEFINED.0, UNDEFINED.0, UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
+                UNDEFINED.0,
             ),
         }));
 
