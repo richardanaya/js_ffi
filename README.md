@@ -59,22 +59,22 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let screen = js!(document.querySelector).call_1(DOCUMENT, "#screen");
-    let ctx = js!(document.querySelector).call_1(screen, "#screen");
+    let screen = js!(document.querySelector).call_1(&DOCUMENT, "#screen").to_js_object();
+    let ctx = js!(document.querySelector).call_1(&screen, "#screen").to_js_object();
 
     let fill_style = js!(function(color){
         this.fillStyle = color;
     });
     let fill_rect = js!(CanvasRenderingContext2D.prototype.fillRect);
 
-    fill_style.call_1(ctx, "red");
-    fill_rect.call_4(ctx, 0.0, 0.0, 50.0, 50.0);
+    fill_style.call_1(&ctx, "red");
+    fill_rect.call_4(&ctx, 0.0, 0.0, 50.0, 50.0);
 
-    fill_style.call_1(ctx, "green");
-    fill_rect.call_4(ctx, 15.0, 15.0, 50.0, 50.0);
+    fill_style.call_1(&ctx, "green");
+    fill_rect.call_4(&ctx, 15.0, 15.0, 50.0, 50.0);
 
-    fill_style.call_1(ctx, "blue");
-    fill_rect.call_4(ctx, 30.0, 30.0, 50.0, 50.0);
+    fill_style.call_1(&ctx, "blue");
+    fill_rect.call_4(&ctx, 30.0, 30.0, 50.0, 50.0);
 }
 ```
 
@@ -85,9 +85,9 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let btn = js!(document.querySelector).call_1(DOCUMENT, "#button");
+    let btn = js!(document.querySelector).call_1(&DOCUMENT, "#button").to_js_object();
     js!(Node.prototype.addEventListener).call_2(
-        btn,
+        &btn,
         "click",
         create_callback_0(|| {
             js!(window.alert).invoke_1("I was clicked");
@@ -134,9 +134,9 @@ fn main() {
     let jquery_on_handle = js!(jQuery.prototype.on);
     let alert = js!((msg)=>window.alert(msg));
 
-    let body = jquery_handle.invoke_1("body");
+    let body = jquery_handle.invoke_1("body").to_js_object();
     jquery_on_handle.call_2(
-        body,
+        &body,
         "click",
         create_callback_1(move |_event| {
             alert.invoke_1("I was clicked!");
