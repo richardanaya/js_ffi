@@ -5,7 +5,7 @@ use js_ffi::*;
 
 #[no_mangle]
 pub fn main() -> () {
-    js!(console.log).invoke_1("Hello World");
+    register_function("console.log").invoke_1("Hello World");
 }
 
 extern crate wee_alloc;

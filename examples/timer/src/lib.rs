@@ -6,9 +6,9 @@ use spin::Mutex;
 
 static JS_API: Lazy<Mutex<API>> = Lazy::new(|| {
     let a = API {
-        log_handle: js!(console.log),
-        set_interval_handle: js!(window.setInterval),
-        set_timeout_handle: js!(window.setTimeout),
+        log_handle: register_function("console.log"),
+        set_interval_handle: register_function("window.setInterval"),
+        set_timeout_handle: register_function("window.setTimeout"),
     };
     Mutex::new(a)
 });

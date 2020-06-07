@@ -2,7 +2,7 @@ use js_ffi::*;
 
 #[no_mangle]
 pub fn main() -> () {
-    let log = js!(console.log);
+    let log = register_function("console.log");
     log.invoke_1(&vec![1u8, 2, 3]);
     log.invoke_1(&vec![4u32, 8, 12]);
     log.invoke_1(&vec![-1i32, 1000, -1000]);
@@ -10,7 +10,7 @@ pub fn main() -> () {
     log.invoke_1(&vec![1.2, 0.0, -2.333]);
     let a = vec![1.0,2.0];
     // send array to js and send it back immediately
-    let result = js!((data)=>data).invoke_1(&a).to_vec::<f32>();
+    let result = register_function("(data)=>data").invoke_1(&a).to_vec::<f32>();
     log.invoke_1(result.len());
     log.invoke_1(result[0]);
     log.invoke_1(result[1]);
@@ -20,7 +20,7 @@ pub fn main() -> () {
 
     let b = vec![1u8,5,6];
     // send array to js and send it back immediately
-    let result2 = js!((data)=>data).invoke_1(&b).to_vec::<u8>();
+    let result2 = register_function("(data)=>data").invoke_1(&b).to_vec::<u8>();
     // make sure its same values
     assert_eq!(b,result2);
     log.invoke_1(result2[1]);

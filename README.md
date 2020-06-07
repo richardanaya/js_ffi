@@ -12,7 +12,6 @@ A foreign function interface(FFI) library for invoking Javascript functions from
 - [x] memory as a parameter
 - [x] wrapper library for Rust
 - [x] works with C or C++, [check out examples here](https://github.com/richardanaya/js_ffi/tree/master/examples_in_c)
-- [x] a `js!` macro for inline javascript
 - [x] typed arrays
 - [x] can be executed in a web worker
 
@@ -31,7 +30,7 @@ use js_ffi::*;
 ​
 #[no_mangle]
 pub fn main() -> () {
-    js!(console.log).invoke_1("Hello World");
+    register_(console.log).invoke_1("Hello World");
 }
 ```
 ```html
@@ -59,13 +58,13 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let screen = js!(document.querySelector).call_1(&DOCUMENT, "#screen").to_js_object();
-    let ctx = js!(document.querySelector).call_1(&screen, "#screen").to_js_object();
+    let screen = register_function("document.querySelector").call_1(&DOCUMENT, "#screen").to_js_object();
+    let ctx = register_function("document.querySelector").call_1(&screen, "#screen").to_js_object();
 
-    let fill_style = js!(function(color){
+    let fill_style = register_function("function(color){
         this.fillStyle = color;
-    });
-    let fill_rect = js!(CanvasRenderingContext2D.prototype.fillRect);
+    }");
+    let fill_rect = register_function("CanvasRenderingContext2D.prototype.fillRect");
 
     fill_style.call_1(&ctx, "red");
     fill_rect.call_4(&ctx, 0.0, 0.0, 50.0, 50.0);
@@ -85,12 +84,12 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let btn = js!(document.querySelector).call_1(&DOCUMENT, "#button").to_js_object();
-    js!(Node.prototype.addEventListener).call_2(
+    let btn = register_function("document.querySelector").call_1(&DOCUMENT, "#button").to_js_object();
+    register_function("Node.prototype.addEventListener").call_2(
         &btn,
         "click",
         create_callback_0(|| {
-            js!(window.alert).invoke_1("I was clicked");
+            register_function("window.alert").invoke_1("I was clicked");
         }),
     );
 }
@@ -106,7 +105,7 @@ use js_ffi::*;
 #[no_mangle]
 pub fn main() -> () {
     executor::spawn(async {
-        let console_log = js!(console.log);
+        let console_log = register_function("console.log");
         console_log.invoke_1("Hello");
         sleep(1000).await;
         console_log.invoke_1("world!");
@@ -114,7 +113,7 @@ pub fn main() -> () {
 }
 
 fn sleep(millis: u32) -> impl core::future::Future {
-    let set_timeout = js!(window.setTimeout);
+    let set_timeout = register_function("window.setTimeout");
     let (future, cb) = create_callback_future_0();
     set_timeout.invoke_2(cb, millis);
     future
@@ -130,9 +129,9 @@ use js_ffi::*;
 
 #[no_mangle]
 fn main() {
-    let jquery_handle = js!($);
-    let jquery_on_handle = js!(jQuery.prototype.on);
-    let alert = js!((msg)=>window.alert(msg));
+    let jquery_handle = register_function("$");
+    let jquery_on_handle = register_function("jQuery.prototype.on");
+    let alert = register_function("(msg)=>window.alert(msg)");
 
     let body = jquery_handle.invoke_1("body").to_js_object();
     jquery_on_handle.call_2(
@@ -162,7 +161,7 @@ A collection of libraries exist that expose javascript functionality so you don'
 
 ## How it works
 
-1. Get a handle to some Javascript function using the `js!` macro. Re-use this handle as often as possible.
+1. Get a handle to some Javascript function using `register_function`. Re-use this handle as often as possible.
 2. If you are invoking this function as a regular function, use the appropriate `invoke_*` function based on the number of arguments you are passing (`invoke_1`,`invoke_7`,etc.).
 3. If you are invoking this function as a method of an object represented by a `JSValue`, use the appropriate `call_*` function based on the number of arguments you are passing (`call_1`,`invoke_7`,etc.) and make sure your object is the first paramter.
 
